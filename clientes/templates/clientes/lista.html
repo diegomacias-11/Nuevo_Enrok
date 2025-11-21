@@ -1,0 +1,58 @@
+{% extends "lista.html" %}
+{% load cliente_extras %}
+
+{% block title %}Clientes{% endblock %}
+
+{% block filtros %}
+  <form action="{% url 'clientes_lista' %}" method="get" class="filter-form-simple">
+    <label for="q">Buscar</label>
+    <input type="text" id="q" name="q" value="{{ request.GET.q }}" placeholder="Razón Social">
+    <button type="submit" class="btn-filter">Filtrar</button>
+    <a href="{% url 'clientes_lista' %}" class="btn-filter">Limpiar</a>
+    <a href="{% url 'agregar_cliente' %}?next={{ request.get_full_path|urlencode }}" class="btn-primary">Nuevo cliente</a>
+  </form>
+{% endblock %}
+
+{% block tabla_head %}
+  <tr>
+    <th class="sticky-1 col-actions">Acciones</th>
+    <th class="sticky-2">Razón Social</th>
+    <th>Servicio</th>
+    <th>Comisión servicio</th>
+    <th>Comisionista 1</th><th>Comisión 1</th>
+    <th>Comisionista 2</th><th>Comisión 2</th>
+    <th>Comisionista 3</th><th>Comisión 3</th>
+    <th>Comisionista 4</th><th>Comisión 4</th>
+    <th>Comisionista 5</th><th>Comisión 5</th>
+    <th>Comisionista 6</th><th>Comisión 6</th>
+    <th>Comisionista 7</th><th>Comisión 7</th>
+    <th>Comisionista 8</th><th>Comisión 8</th>
+    <th>Comisionista 9</th><th>Comisión 9</th>
+    <th>Comisionista 10</th><th>Comisión 10</th>
+  </tr>
+{% endblock %}
+
+{% block tabla_body %}
+  {% for c in clientes %}
+  <tr>
+    <td class="sticky-1 col-actions">
+      <a class="btn-detalle" href="{% url 'editar_cliente' c.id %}?next={{ request.get_full_path|urlencode }}">Editar</a>
+    </td>
+    <td class="sticky-2">{{ c.razon_social }}</td>
+    <td>{{ c.get_servicio_display }}</td>
+    <td>{% if c.comision_servicio is not None %}{{ c.comision_servicio|pct }}{% endif %}</td>
+    <td>{{ c.comisionista1 }}</td><td>{% if c.comision1 is not None %}{{ c.comision1|pct }}{% endif %}</td>
+    <td>{{ c.comisionista2 }}</td><td>{% if c.comision2 is not None %}{{ c.comision2|pct }}{% endif %}</td>
+    <td>{{ c.comisionista3 }}</td><td>{% if c.comision3 is not None %}{{ c.comision3|pct }}{% endif %}</td>
+    <td>{{ c.comisionista4 }}</td><td>{% if c.comision4 is not None %}{{ c.comision4|pct }}{% endif %}</td>
+    <td>{{ c.comisionista5 }}</td><td>{% if c.comision5 is not None %}{{ c.comision5|pct }}{% endif %}</td>
+    <td>{{ c.comisionista6 }}</td><td>{% if c.comision6 is not None %}{{ c.comision6|pct }}{% endif %}</td>
+    <td>{{ c.comisionista7 }}</td><td>{% if c.comision7 is not None %}{{ c.comision7|pct }}{% endif %}</td>
+    <td>{{ c.comisionista8 }}</td><td>{% if c.comision8 is not None %}{{ c.comision8|pct }}{% endif %}</td>
+    <td>{{ c.comisionista9 }}</td><td>{% if c.comision9 is not None %}{{ c.comision9|pct }}{% endif %}</td>
+    <td>{{ c.comisionista10 }}</td><td>{% if c.comision10 is not None %}{{ c.comision10|pct }}{% endif %}</td>
+  </tr>
+  {% empty %}
+  <tr><td colspan="23">No hay clientes registrados.</td></tr>
+  {% endfor %}
+{% endblock %}

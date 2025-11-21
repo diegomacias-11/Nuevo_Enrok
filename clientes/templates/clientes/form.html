@@ -1,0 +1,89 @@
+{% extends "form.html" %}
+
+{% block form_container_classes %}clientes-form{% endblock %}
+
+{% block title %}{% if cliente %}Editar Cliente{% else %}Nuevo Cliente{% endif %}{% endblock %}
+
+{% block back_link %}
+  <section class="filter-container">
+    <a href="{{ back_url }}" class="btn-filter">Volver</a>
+  </section>
+{% endblock %}
+
+{% block form_fields %}
+  {% if cliente %}
+  <div class="form-meta">Fecha de registro: {{ cliente.fecha_registro|date:"d/m/Y H:i" }}</div>
+  {% endif %}
+
+  <input type="hidden" name="next" value="{{ back_url }}">  {% if form.non_field_errors %}  <div class="form-alert">{{ form.non_field_errors }}</div>  {% endif %}
+  <div class="form-grid">
+    <div class="form-col">
+      <label for="{{ form.razon_social.id_for_label }}">Razón Social</label>
+      {{ form.razon_social }}
+
+      <label for="{{ form.servicio.id_for_label }}">Servicio</label>
+      {{ form.servicio }}
+
+      <label for="{{ form.comision_servicio.id_for_label }}">Comisión por servicio (%)</label>
+      {{ form.comision_servicio }}      {% if form.comision_servicio.errors %}      <div class="form-alert">{{ form.comision_servicio.errors }}</div>      {% endif %}
+    </div>
+    
+    <div class="form-col">
+      <label>Comisionista 1</label>
+      {{ form.comisionista1 }}
+      <label>Comisionista 2</label>
+      {{ form.comisionista2 }}
+      <label>Comisionista 3</label>
+      {{ form.comisionista3 }}
+      <label>Comisionista 4</label>
+      {{ form.comisionista4 }}
+      <label>Comisionista 5</label>
+      {{ form.comisionista5 }}
+      <label>Comisionista 6</label>
+      {{ form.comisionista6 }}
+      <label>Comisionista 7</label>
+      {{ form.comisionista7 }}
+      <label>Comisionista 8</label>
+      {{ form.comisionista8 }}
+      <label>Comisionista 9</label>
+      {{ form.comisionista9 }}
+      <label>Comisionista 10</label>
+      {{ form.comisionista10 }}
+    </div>
+
+    <div class="form-col">
+      <label>Comisión 1 (%)</label>
+      {{ form.comision1 }}
+      <label>Comisión 2 (%)</label>
+      {{ form.comision2 }}
+      <label>Comisión 3 (%)</label>
+      {{ form.comision3 }}
+      <label>Comisión 4 (%)</label>
+      {{ form.comision4 }}
+      <label>Comisión 5 (%)</label>
+      {{ form.comision5 }}
+      <label>Comisión 6 (%)</label>
+      {{ form.comision6 }}
+      <label>Comisión 7 (%)</label>
+      {{ form.comision7 }}
+      <label>Comisión 8 (%)</label>
+      {{ form.comision8 }}
+      <label>Comisión 9 (%)</label>
+      {{ form.comision9 }}
+      <label>Comisión 10 (%)</label>
+      {{ form.comision10 }}
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_actions %}
+  {% if cliente %}
+    <button type="submit"
+            class="btn-delete"
+            formaction="{% url 'eliminar_cliente' cliente.id %}"
+            formmethod="post"
+            onclick="return confirm('¿Eliminar este cliente?');">
+      Eliminar
+    </button>
+  {% endif %}
+{% endblock %}

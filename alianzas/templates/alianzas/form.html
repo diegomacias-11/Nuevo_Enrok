@@ -1,0 +1,34 @@
+{% extends "form.html" %}
+
+{% block title %}{% if alianza %}Editar Alianza{% else %}Nueva Alianza{% endif %}{% endblock %}
+
+{% block back_link %}
+  <section class="filter-container">
+    <a href="{{ back_url }}" class="btn-filter">Volver</a>
+  </section>
+{% endblock %}
+
+{% block form_fields %}
+  {% if alianza %}
+  <div class="form-meta">Fecha de registro: {{ alianza.fecha_registro|date:"d/m/Y H:i" }}</div>
+  {% endif %}
+  <input type="hidden" name="next" value="{{ back_url }}">
+  <div class="form-grid">
+    <div class="form-col">
+      <label for="{{ form.nombre.id_for_label }}">Nombre</label>
+      {{ form.nombre }}
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_actions %}
+  {% if alianza %}
+    <button type="submit"
+            class="btn-delete"
+            formaction="{% url 'eliminar_alianza' alianza.id %}"
+            formmethod="post"
+            onclick="return confirm('¿Eliminar esta alianza?');">
+      Eliminar
+    </button>
+  {% endif %}
+{% endblock %}

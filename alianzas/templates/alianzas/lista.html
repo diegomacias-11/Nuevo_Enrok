@@ -1,0 +1,35 @@
+{% extends "lista.html" %}
+
+{% block title %}Alianzas{% endblock %}
+
+{% block filtros %}
+  <form action="{% url 'alianzas_lista' %}" method="get" class="filter-form-simple">
+    <label for="q">Buscar</label>
+    <input type="text" id="q" name="q" value="{{ request.GET.q }}" placeholder="Nombre de la alianza">
+    <button type="submit" class="btn-filter">Filtrar</button>
+    <a href="{% url 'alianzas_lista' %}" class="btn-filter">Limpiar</a>
+    <a href="{% url 'agregar_alianza' %}?next={{ request.get_full_path|urlencode }}" class="btn-primary">Nueva alianza</a>
+  </form>
+{% endblock %}
+
+{% block tabla_head %}
+  <tr>
+    <th class="sticky-1 col-actions">Acciones</th>
+    <th class="sticky-2">Nombre</th>
+    <th>Fecha registro</th>
+  </tr>
+{% endblock %}
+
+{% block tabla_body %}
+  {% for alianza in alianzas %}
+  <tr>
+    <td class="sticky-1 col-actions">
+      <a class="btn-detalle" href="{% url 'editar_alianza' alianza.id %}?next={{ request.get_full_path|urlencode }}">Editar</a>
+    </td>
+    <td class="sticky-2">{{ alianza.nombre }}</td>
+    <td>{{ alianza.fecha_registro|date:"Y-m-d H:i" }}</td>
+  </tr>
+  {% empty %}
+  <tr><td colspan="3">No hay alianzas registradas.</td></tr>
+  {% endfor %}
+{% endblock %}

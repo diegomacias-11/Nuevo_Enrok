@@ -1,0 +1,70 @@
+{% extends "form.html" %}
+
+{% block form_container_classes %}dispersiones-form{% endblock %}
+
+{% block title %}{% if dispersion %}Editar Dispersión{% else %}Nueva Dispersión{% endif %}{% endblock %}
+
+{% block back_link %}
+  <section class="filter-container">
+    <a href="{{ back_url }}" class="btn-filter">Volver</a>
+  </section>
+{% endblock %}
+
+{% block form_fields %}
+  <input type="hidden" name="next" value="{{ back_url }}">
+  <input type="hidden" name="mes" value="{{ mes }}">
+  <input type="hidden" name="anio" value="{{ anio }}">
+
+  <div class="form-grid">
+    <div class="form-col">
+      <label for="{{ form.fecha.id_for_label }}">Fecha</label>
+      {{ form.fecha }}
+
+      <label for="{{ form.cliente.id_for_label }}">Cliente</label>
+      {{ form.cliente|default_if_none:"" }}
+
+      <label for="{{ form.comentarios.id_for_label }}">Comentarios</label>
+      {{ form.comentarios|default_if_none:"" }}
+    </div>
+
+    <div class="form-col">
+      <label for="{{ form.monto_dispersion.id_for_label }}">Monto dispersión</label>
+      <div class="input-currency">{{ form.monto_dispersion|default_if_none:"" }}</div>
+
+      <label for="{{ form.factura.id_for_label }}">Factura</label>
+      {{ form.factura|default_if_none:"" }}
+
+      <label for="{{ form.num_factura.id_for_label }}">No. factura</label>
+      {{ form.num_factura|default_if_none:"" }}
+
+      <label for="{{ form.num_factura_honorarios.id_for_label }}">No. factura honorarios</label>
+      {{ form.num_factura_honorarios|default_if_none:"" }}
+
+      <label for="{{ form.num_periodo.id_for_label }}">No. periodo</label>
+      {{ form.num_periodo|default_if_none:"" }}
+    </div>
+
+    <div class="form-col">
+      <label for="{{ form.estatus_proceso.id_for_label }}">Estatus proceso</label>
+      {{ form.estatus_proceso|default_if_none:"" }}
+
+      <label for="{{ form.estatus_periodo.id_for_label }}">Estatus periodo</label>
+      {{ form.estatus_periodo|default_if_none:"" }}
+
+      <label for="{{ form.estatus_pago.id_for_label }}">Estatus pago</label>
+      {{ form.estatus_pago|default_if_none:"" }}
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_actions %}
+  {% if dispersion %}
+    <button type="submit"
+            class="btn-delete"
+            formaction="{% url 'eliminar_dispersion' dispersion.id %}"
+            formmethod="post"
+            onclick="return confirm('¿Eliminar esta dispersión?');">
+      Eliminar
+    </button>
+  {% endif %}
+{% endblock %}

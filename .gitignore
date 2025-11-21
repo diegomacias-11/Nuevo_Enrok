@@ -1,0 +1,59 @@
+# Python bytecode / cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+.env
+*.env
+
+# Django
+db.sqlite3
+*.log
+staticfiles/
+media/
+
+# Packaging / build
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Test & coverage
+.pytest_cache/
+.coverage*
+coverage.xml
+htmlcov/
+
+# Type checkers
+.mypy_cache/
+.pytype/
+.dmypy.json
+
+# Editors / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Credentials / keys (keep sensitive files out of git)
+credentials/
+*.crt
+*.key
+*.pem
+*.pfx
+*.p12
+*.csr
+*.cer
+*.der

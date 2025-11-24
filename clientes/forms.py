@@ -2,6 +2,11 @@ from decimal import Decimal, ROUND_HALF_UP
 from django import forms
 from .models import Cliente
 
+PERCENT_Q = Decimal("0.000001")
+
+def _percent_to_fraction(val):
+    return (Decimal(val) / Decimal("100")).quantize(PERCENT_Q)
+
 
 class ClienteForm(forms.ModelForm):
     class Meta:
@@ -30,7 +35,7 @@ class ClienteForm(forms.ModelForm):
                 key = f"comision{i}"
                 val = getattr(self.instance, key, None)
                 if val is not None:
-                    # Mostrar con hasta 6 decimales (sin notación científica)
+                    # Mostrar con hasta 6 decimales (sin notaci?n cient?fica)
                     percent = (Decimal(val) * Decimal(100)).quantize(Decimal("0.000001"), rounding=ROUND_HALF_UP)
                     self.initial[key] = format(percent, 'f')
             # comision por servicio
@@ -55,38 +60,30 @@ class ClienteForm(forms.ModelForm):
             self.add_error("comision_servicio", "Este campo es obligatorio.")
         else:
             try:
-                dec = Decimal(val_cs)
-                if dec > 1:
-                    dec = (dec / Decimal("100")).quantize(Decimal("0.000001"))
-                cleaned["comision_servicio"] = dec
+                cleaned["comision_servicio"] = _percent_to_fraction(val_cs)
             except Exception:
-                self.add_error("comision_servicio", "Valor inválido.")
+                self.add_error("comision_servicio", "Valor inv?lido.")
         total_comisionistas = Decimal("0")
         for i in range(1, 11):
             key = f"comision{i}"
             val = cleaned.get(key)
-            if val is None:
+            if val in (None, ""):
                 continue
-            # si viene como porcentaje, dividir entre 100 (admite decimales)
             try:
-                dec = Decimal(val)
+                dec = _percent_to_fraction(val)
             except Exception:
                 continue
-            # si el usuario captura 25 -> 0.25
-            if dec > 1:
-                dec = (dec / Decimal(100)).quantize(Decimal("0.000001"))
             cleaned[key] = dec
             total_comisionistas += dec
-        # Validar que la suma de comisionistas no exceda ni sea menor a la comisión del servicio
+        # Validar que la suma de comisionistas no exceda ni sea menor a la comisi?n del servicio
         cs = cleaned.get("comision_servicio")
         if cs not in (None, ""):
             try:
-                cs_dec = Decimal(cs)
-                eps = Decimal("0.000001")
-                if total_comisionistas > cs_dec + eps:
-                    self.add_error(None, "La suma de porcentajes de comisionistas supera la comisión por servicio.")
-                elif total_comisionistas + eps < cs_dec:
-                    self.add_error(None, "La suma de porcentajes de comisionistas es menor que la comisión por servicio.")
+                eps = PERCENT_Q
+                if total_comisionistas > cs + eps:
+                    self.add_error(None, "La suma de porcentajes de comisionistas supera la comisi?n por servicio.")
+                elif total_comisionistas + eps < cs:
+                    self.add_error(None, "La suma de porcentajes de comisionistas es menor que la comisi?n por servicio.")
             except Exception:
                 pass
         return cleaned

@@ -9,7 +9,7 @@ class DispersionForm(forms.ModelForm):
         fields = [
             "fecha",
             "cliente",
-            "factura",
+            "facturadora",
             "num_factura",
             "monto_dispersion",
             "num_factura_honorarios",

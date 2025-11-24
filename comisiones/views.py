@@ -70,11 +70,13 @@ def comisiones_lista(request):
     total_pagos = PagoComision.objects.filter(periodo_mes=mes, periodo_anio=anio).aggregate(v=Sum('monto'))['v'] or 0
     total_pendiente = total_liberado - total_pagos
 
+    meses_choices = [(i, MESES_NOMBRES[i]) for i in range(1, 13)]
     context = {
         'mes': str(mes),
         'anio': str(anio),
         'resumen': resumen,
         'meses': list(range(1, 13)),
+        'meses_choices': meses_choices,
         'mes_nombre': MESES_NOMBRES[mes],
         'total_periodo': total_periodo,
         'total_liberado': total_liberado,

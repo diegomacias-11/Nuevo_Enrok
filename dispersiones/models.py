@@ -24,7 +24,7 @@ class Dispersion(models.Model):
     fecha = models.DateField(default=timezone.localdate)
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
     servicio = models.CharField(max_length=50, blank=True, null=True)
-    factura = models.CharField(max_length=100)
+    facturadora = models.CharField(max_length=100)
     num_factura = models.CharField(max_length=100, blank=True, null=True)
     monto_dispersion = models.DecimalField(max_digits=12, decimal_places=2)
     comision_porcentaje = models.DecimalField(max_digits=7, decimal_places=4, editable=False)
@@ -38,7 +38,7 @@ class Dispersion(models.Model):
     estatus_pago = models.CharField(max_length=20, choices=EstatusPago.choices, default=EstatusPago.PENDIENTE)
 
     def __str__(self):
-        return f"{self.cliente} - {self.factura} - {self.fecha}"
+        return f"{self.cliente} - {self.facturadora} - {self.fecha}"
 
     def save(self, *args, **kwargs):
         rate = None

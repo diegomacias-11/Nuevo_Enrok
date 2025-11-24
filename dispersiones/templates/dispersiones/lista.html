@@ -8,9 +8,15 @@
   <form action="{% url 'dispersiones_lista' %}" method="get" class="filter-form-simple dispersiones-filter">
     <label for="mes">Mes</label>
     <select id="mes" name="mes">
-      {% for m in meses %}
-        <option value="{{ m }}" {% if mes == m|stringformat:'i' %}selected{% endif %}>{{ m|stringformat:"02d" }}</option>
-      {% endfor %}
+      {% if meses_choices %}
+        {% for m, nombre in meses_choices %}
+          <option value="{{ m }}" {% if mes == m|stringformat:'i' %}selected{% endif %}>{{ nombre }}</option>
+        {% endfor %}
+      {% else %}
+        {% for m in meses %}
+          <option value="{{ m }}" {% if mes == m|stringformat:'i' %}selected{% endif %}>{{ m|stringformat:"02d" }}</option>
+        {% endfor %}
+      {% endif %}
     </select>
     <label for="anio">Año</label>
     <input type="number" id="anio" name="anio" value="{{ anio }}" min="2000" max="2100">
@@ -25,7 +31,7 @@
     <th class="sticky-2 col-fecha">Fecha</th>
     <th class="sticky-3">Cliente</th>
     <th>Servicio</th>
-    <th>Factura</th>
+    <th>Facturadora</th>
     <th>No. factura</th>
     <th>Monto dispersión</th>
     <th>Comisión (%)</th>
@@ -46,7 +52,7 @@
       <td class="sticky-2 col-fecha">{{ d.fecha|date:"d/m/Y" }}</td>
       <td class="sticky-3">{{ d.cliente.razon_social }}</td>
       <td>{{ d.servicio|default_if_none:"" }}</td>
-      <td>{{ d.factura|default_if_none:"" }}</td>
+      <td>{{ d.facturadora|default_if_none:"" }}</td>
       <td>{{ d.num_factura|default_if_none:"" }}</td>
       <td>{{ d.monto_dispersion|currency }}</td>
       <td>{{ d.comision_porcentaje|floatformat:2 }}%</td>

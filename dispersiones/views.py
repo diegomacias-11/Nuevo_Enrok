@@ -37,11 +37,13 @@ def dispersiones_lista(request):
         "", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
         "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
     ]
+    meses_choices = [(i, meses_nombres[i]) for i in range(1, 13)]
     context = {
         "dispersiones": dispersiones,
         "mes": str(mes),
         "anio": str(anio),
         "meses": list(range(1, 13)),
+        "meses_choices": meses_choices,
         "mes_nombre": meses_nombres[mes],
     }
     return render(request, "dispersiones/lista.html", context)

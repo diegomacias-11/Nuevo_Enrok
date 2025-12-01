@@ -2,7 +2,7 @@ from datetime import date
 from calendar import monthrange
 from django.conf import settings
 from django.contrib import messages
-from django.core.mail import EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives, get_connection
 from django.db.models import Sum, Q, Count
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
@@ -234,11 +234,13 @@ def enviar_detalle_comisionista(request, comisionista_id):
     text_body = strip_tags(html_body)
 
     try:
+        connection = get_connection(timeout=getattr(settings, "EMAIL_TIMEOUT", None))
         msg = EmailMultiAlternatives(
             subject=subject,
             body=text_body,
             from_email=settings.DEFAULT_FROM_EMAIL,
             to=[destinatario],
+            connection=connection,
         )
         msg.attach_alternative(html_body, "text/html")
         msg.send()

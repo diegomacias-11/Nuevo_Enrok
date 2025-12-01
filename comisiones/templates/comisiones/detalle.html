@@ -31,7 +31,12 @@
       <input type="hidden" name="anio" value="{{ anio }}">
       <a href="{% url 'comisiones_lista' %}?mes={{ mes }}&anio={{ anio }}" class="btn-filter">Volver</a>
     </form>
-    <a class="btn-primary" href="{% url 'comisiones_registrar_pago_by_id' comisionista.id %}?mes={{ mes }}&anio={{ anio }}">Registrar pago</a>
+    <div class="actions">
+      {% if comisionista %}
+        <a class="btn-primary" href="{% url 'comisiones_enviar_detalle' comisionista.id %}?mes={{ mes }}&anio={{ anio }}">Enviar reporte</a>
+        <a class="btn-primary" href="{% url 'comisiones_registrar_pago_by_id' comisionista.id %}?mes={{ mes }}&anio={{ anio }}">Registrar pago</a>
+      {% endif %}
+    </div>
   </div>
 {% endblock %}
 

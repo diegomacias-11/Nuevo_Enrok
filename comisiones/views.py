@@ -1,8 +1,13 @@
 from datetime import date
 from calendar import monthrange
+from django.conf import settings
+from django.contrib import messages
+from django.core.mail import EmailMultiAlternatives
 from django.db.models import Sum, Q, Count
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 from dispersiones.models import Dispersion
 from .models import Comision, PagoComision
 from .forms import PagoComisionForm
@@ -90,27 +95,7 @@ def comisiones_detalle(request, comisionista_id):
     mes, anio, redir = _coerce_mes_anio(request)
     if redir:
         return redir
-    qs = Comision.objects.filter(periodo_mes=mes, periodo_anio=anio, comisionista_id=comisionista_id) \
-        .select_related('dispersion', 'cliente', 'comisionista')
-    pagos = PagoComision.objects.filter(periodo_mes=mes, periodo_anio=anio, comisionista_id=comisionista_id).order_by('fecha_pago')
-    # Totales para cabecera del detalle
-    total_periodo = qs.aggregate(v=Sum('monto'))['v'] or 0
-    total_liberado = qs.filter(liberada=True).aggregate(v=Sum('monto'))['v'] or 0
-    total_pagos = pagos.aggregate(v=Sum('monto'))['v'] or 0
-    total_pendiente = total_liberado - total_pagos
-    context = {
-        'mes': str(mes),
-        'anio': str(anio),
-        'comisionista': qs.first().comisionista if qs.exists() else None,
-        'items': qs,
-        'meses': list(range(1, 13)),
-        'mes_nombre': MESES_NOMBRES[mes],
-        'pagos': pagos,
-        'total_periodo': total_periodo,
-        'total_liberado': total_liberado,
-        'total_pagos': total_pagos,
-        'total_pendiente': total_pendiente,
-    }
+    context = _detalle_context(comisionista_id, mes, anio)
     return render(request, 'comisiones/detalle.html', context)
 
 
@@ -203,3 +188,62 @@ def eliminar_pago(request, id: int):
     back_url = request.POST.get('next') or f"{reverse('comisiones_detalle', args=[pago.comisionista_id])}?mes={mes}&anio={anio}"
     pago.delete()
     return redirect(back_url)
+
+
+def _detalle_context(comisionista_id, mes, anio):
+    qs = Comision.objects.filter(periodo_mes=mes, periodo_anio=anio, comisionista_id=comisionista_id) \
+        .select_related('dispersion', 'cliente', 'comisionista')
+    pagos = PagoComision.objects.filter(periodo_mes=mes, periodo_anio=anio, comisionista_id=comisionista_id).order_by('fecha_pago')
+    total_periodo = qs.aggregate(v=Sum('monto'))['v'] or 0
+    total_liberado = qs.filter(liberada=True).aggregate(v=Sum('monto'))['v'] or 0
+    total_pagos = pagos.aggregate(v=Sum('monto'))['v'] or 0
+    total_pendiente = total_liberado - total_pagos
+    return {
+        'mes': str(mes),
+        'anio': str(anio),
+        'comisionista': qs.first().comisionista if qs.exists() else None,
+        'items': qs,
+        'meses': list(range(1, 13)),
+        'mes_nombre': MESES_NOMBRES[mes],
+        'pagos': pagos,
+        'total_periodo': total_periodo,
+        'total_liberado': total_liberado,
+        'total_pagos': total_pagos,
+        'total_pendiente': total_pendiente,
+    }
+
+
+def enviar_detalle_comisionista(request, comisionista_id):
+    mes, anio, redir = _coerce_mes_anio(request)
+    if redir:
+        return redir
+
+    context = _detalle_context(comisionista_id, mes, anio)
+    comisionista = context.get('comisionista')
+    if not comisionista:
+        messages.error(request, "No se encontraron comisiones para este comisionista.")
+        return redirect(reverse('comisiones_lista') + f"?mes={mes}&anio={anio}")
+
+    destinatario = getattr(comisionista, 'correo_electronico', None)
+    if not destinatario:
+        messages.error(request, "El comisionista no tiene correo registrado.")
+        return redirect(reverse('comisiones_detalle', args=[comisionista_id]) + f"?mes={mes}&anio={anio}")
+
+    subject = f"Detalle de comisiones {context['mes_nombre']} {anio} - {comisionista.nombre}"
+    html_body = render_to_string('comisiones/email_reporte.html', context)
+    text_body = strip_tags(html_body)
+
+    try:
+        msg = EmailMultiAlternatives(
+            subject=subject,
+            body=text_body,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=[destinatario],
+        )
+        msg.attach_alternative(html_body, "text/html")
+        msg.send()
+        messages.success(request, f"Reporte enviado a {destinatario}.")
+    except Exception as exc:
+        messages.error(request, f"No se pudo enviar el correo: {exc}")
+
+    return redirect(reverse('comisiones_detalle', args=[comisionista_id]) + f"?mes={mes}&anio={anio}")

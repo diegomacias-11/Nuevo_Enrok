@@ -27,6 +27,7 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name='auth/login.html'), name='login'),
     path('logout/', core_views.logout_view, name='logout'),
     path('admin/', admin.site.urls),
+    path('', include('comercial.urls')),
     path('alianzas/', include('alianzas.urls')),
     path('clientes/', include('clientes.urls')),
     path('dispersiones/', include('dispersiones.urls')),

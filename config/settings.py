@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'core',
     'alianzas',
     'clientes',
+    'comercial',
     'dispersiones',
     'comisiones',
     'reportes',

@@ -7,7 +7,7 @@ from .models import Cita
 @receiver(post_save, sender=Cita)
 def crear_cliente_al_cerrar(sender, instance: Cita, created: bool, **kwargs):
     """
-    Cuando una Cita queda en estatus_seguimiento 'Cerrado',
+    Cuando una Cita queda en estatus_seguimiento 'Activo',
     crea/actualiza un Cliente con razon_social (prospecto) y servicio.
     """
     try:
@@ -15,7 +15,7 @@ def crear_cliente_al_cerrar(sender, instance: Cita, created: bool, **kwargs):
     except Exception:
         return
 
-    if instance.estatus_seguimiento != "Cerrado":
+    if instance.estatus_seguimiento != "Activo":
         return
 
     servicio_value = None

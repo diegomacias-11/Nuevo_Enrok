@@ -10,6 +10,7 @@ from core.choices import (
     SERVICIO_CHOICES,
     TIPO_CHOICES,
     VENDEDOR_CHOICES,
+    POSIBILIDAD_CHOICES,
 )
 
 
@@ -34,6 +35,7 @@ class Cita(models.Model):
     estatus_cita = models.CharField(max_length=50, choices=ESTATUS_CITA_CHOICES, blank=True, null=True)
     numero_cita = models.CharField(max_length=10, choices=NUM_CITA_CHOICES, blank=True, null=True)
     estatus_seguimiento = models.CharField(max_length=100, choices=ESTATUS_SEGUIMIENTO_CHOICES, blank=True, null=True)
+    posibilidad = models.CharField(max_length=50, choices=POSIBILIDAD_CHOICES, blank=True, null=True)
     comentarios = models.TextField(blank=True, null=True)
     lugar = models.CharField(max_length=50, choices=LUGAR_CHOICES, blank=True, null=True)
     fecha_cita = models.DateTimeField()

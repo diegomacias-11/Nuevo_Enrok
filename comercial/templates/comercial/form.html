@@ -94,6 +94,10 @@
       {{ form.estatus_cita }}
       {% if form.estatus_cita.errors %}<div class="error">{{ form.estatus_cita.errors }}</div>{% endif %}
 
+      <label for="{{ form.posibilidad.id_for_label }}">{{ form.posibilidad.label }}</label>
+      {{ form.posibilidad }}
+      {% if form.posibilidad.errors %}<div class="error">{{ form.posibilidad.errors }}</div>{% endif %}      
+
       <label for="{{ form.fecha_cita.id_for_label }}">{{ form.fecha_cita.label }}</label>
       {{ form.fecha_cita }}
       {% if form.fecha_cita.errors %}<div class="error">{{ form.fecha_cita.errors }}</div>{% endif %}

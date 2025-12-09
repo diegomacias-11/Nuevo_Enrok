@@ -74,3 +74,9 @@ LUGAR_CHOICES = [
     ("Oficina del cliente", "Oficina del cliente"),
     ("Zoom", "Zoom"),
 ]
+
+POSIBILIDAD_CHOICES = [
+    ("Alta", "Alta"),
+    ("Media", "Media"),
+    ("Baja", "Baja"),
+]

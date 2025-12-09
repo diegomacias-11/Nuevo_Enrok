@@ -42,6 +42,7 @@ class CitaForm(forms.ModelForm):
             "conexion",
             "medio",
             "estatus_cita",
+            "posibilidad",
             "fecha_cita",
             "numero_cita",
             "lugar",

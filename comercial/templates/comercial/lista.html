@@ -45,6 +45,7 @@
     <th>Servicio</th>
     <th>Vendedor</th>
     <th>Estatus cita</th>
+    <th>Posbilidad de cierre</th>
     <th>Fecha cita</th>
     <th>Número cita</th>
     <th>Estatus seguimiento</th>
@@ -63,6 +64,7 @@
       <td>{{ c.servicio|default_if_none:"" }}</td>
       <td>{{ c.vendedor|default_if_none:"" }}</td>
       <td>{{ c.estatus_cita|default_if_none:"" }}</td>
+      <td>{{ c.posibilidad|default_if_none:"" }}</td>
       <td>{{ c.fecha_cita|date:"l d/M/y H:i"|default_if_none:"" }}</td>
       <td>{{ c.numero_cita|default_if_none:"" }}</td>
       <td>{{ c.estatus_seguimiento|default_if_none:"" }}</td>

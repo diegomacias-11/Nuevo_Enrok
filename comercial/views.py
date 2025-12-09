@@ -6,6 +6,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
 
+from core.choices import ESTATUS_SEGUIMIENTO_CHOICES
+
 from .models import Cita, NUM_CITA_CHOICES
 
 
@@ -94,6 +96,7 @@ def citas_lista(request: HttpRequest) -> HttpResponse:
     citas = Cita.objects.all().order_by("-fecha_registro")
     fecha_desde = request.GET.get("fecha_desde") or ""
     fecha_hasta = request.GET.get("fecha_hasta") or ""
+    estatus_seguimiento = request.GET.get("estatus_seguimiento") or ""
 
     tz = timezone.get_current_timezone()
     if fecha_desde:
@@ -110,10 +113,14 @@ def citas_lista(request: HttpRequest) -> HttpResponse:
             citas = citas.filter(fecha_cita__lte=end_dt)
         except ValueError:
             pass
+    if estatus_seguimiento:
+        citas = citas.filter(estatus_seguimiento=estatus_seguimiento)
     context = {
         "citas": citas,
         "fecha_desde": fecha_desde,
         "fecha_hasta": fecha_hasta,
+        "estatus_seguimiento": estatus_seguimiento,
+        "estatus_seguimiento_choices": ESTATUS_SEGUIMIENTO_CHOICES,
     }
     return render(request, "comercial/lista.html", context)
 

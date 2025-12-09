@@ -4,37 +4,102 @@
 
 {% block extra_head %}
   <style>
-    .inline-filter label { color: #ffcf56; font-weight: 700; }
-    .filter-container .inline-filter {
+    /* Barra de filtros estilo dispersiones: etiquetas arriba, inputs abajo, separadores y botones alineados */
+    .filter-container {
       display: flex !important;
       align-items: center !important;
-      justify-content: center !important;
-      gap: .5rem !important;
+      gap: 1rem !important;
       flex-wrap: wrap !important;
-      width: auto !important;
-      margin: 0 auto !important;
     }
-    .inline-filter label { text-align: center; }
-    .inline-filter input[type="date"] {
-      width: 12rem;
-      min-width: 10rem;
+    .citas-filter {
+      display: flex !important;
+      align-items: flex-end !important;
+      gap: 0.75rem !important;
+      flex: 1 1 auto !important;
+      justify-content: center !important;
+      flex-wrap: wrap !important;
     }
-    .inline-filter button,
-    .inline-filter a.btn-filter { margin: 0; }
-    .btn-primary-inline { margin-left: auto; }
+    .citas-filter .filter-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .2rem;
+    }
+    .citas-filter .filter-group label {
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin: 0;
+      padding: 0;
+    }
+    .citas-filter .filter-group input[type="date"],
+    .citas-filter .filter-group select {
+      padding: .32rem .45rem;
+      border-radius: 6px;
+    }
+    .citas-filter #fecha_desde,
+    .citas-filter #fecha_hasta {
+      min-width: 8rem !important;
+      width: 8rem !important;
+      max-width: 8rem !important;
+    }
+    .citas-filter #estatus_seguimiento {
+      min-width: 12rem !important;
+    }
+    .citas-filter .sep {
+      width: 1px;
+      height: 2.8rem;
+      background: #ffcf56;
+      align-self: flex-end;
+      display: inline-block;
+    }
+    .citas-filter .btn-filter {
+      margin: 0;
+      align-self: center;
+    }
+    .citas-filter .btn-filtrar,
+    .citas-filter .btn-limpiar {
+      align-self: flex-end;
+    }
+    /* Botón principal a la derecha */
+    .filter-container > .btn-primary {
+      margin-left: auto !important;
+      position: static !important;
+      transform: none !important;
+    }
+    @media (max-width: 900px) {
+      .citas-filter {
+        justify-content: center !important;
+      }
+    }
   </style>
 {% endblock %}
 
 {% block filtros %}
-  <form method="get" class="inline-filter">
-    <label for="fecha_desde">Fecha desde</label>
-    <input type="date" id="fecha_desde" name="fecha_desde" value="{{ fecha_desde }}" />
-    <label for="fecha_hasta">Fecha hasta</label>
-    <input type="date" id="fecha_hasta" name="fecha_hasta" value="{{ fecha_hasta }}" />
-    <button type="submit" class="btn-filter">Filtrar</button>
-    <a href="{% url 'citas_lista' %}" class="btn-filter">Limpiar</a>
+  <form method="get" class="filter-form-simple citas-filter">
+    <div class="filter-group">
+      <label for="fecha_desde">Fecha desde</label>
+      <input type="date" id="fecha_desde" name="fecha_desde" value="{{ fecha_desde }}" />
+    </div>
+    <span class="sep" aria-hidden="true"></span>
+    <div class="filter-group">
+      <label for="fecha_hasta">Fecha hasta</label>
+      <input type="date" id="fecha_hasta" name="fecha_hasta" value="{{ fecha_hasta }}" />
+    </div>
+    <span class="sep" aria-hidden="true"></span>
+    <div class="filter-group">
+      <label for="estatus_seguimiento">Estatus seguimiento</label>
+      <select id="estatus_seguimiento" name="estatus_seguimiento">
+        <option value="">Todos</option>
+        {% for value, label in estatus_seguimiento_choices %}
+          <option value="{{ value }}" {% if value == estatus_seguimiento %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <button type="submit" class="btn-filter btn-filtrar">Filtrar</button>
+    <a href="{% url 'citas_lista' %}" class="btn-filter btn-limpiar">Limpiar</a>
   </form>
-  <a href="{% url 'agregar_cita' %}?next={{ request.get_full_path|urlencode }}" class="btn-primary btn-primary-inline">Nueva cita</a>
+  <a href="{% url 'agregar_cita' %}?next={{ request.get_full_path|urlencode }}" class="btn-primary">Nueva cita</a>
 {% endblock %}
 
 {% block tabla_head %}

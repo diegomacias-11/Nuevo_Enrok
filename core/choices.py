@@ -19,6 +19,7 @@ SERVICIO_CHOICES = [
     ("Fiscal", "Fiscal"),
     ("Auto-ahorro", "Auto-ahorro"),
     ("CheckUp", "CheckUp"),
+    ("Efectivo", "Efectivo"),
     ("Hidrocarburos", "Hidrocarburos"),
     ("Monederos", "Monederos"),
     ("Mutualink", "Mutualink"),

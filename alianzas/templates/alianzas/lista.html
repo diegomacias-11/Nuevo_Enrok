@@ -28,7 +28,7 @@
       <a class="btn-detalle" href="{% url 'editar_alianza' alianza.id %}?next={{ request.get_full_path|urlencode }}">Editar</a>
     </td>
     <td class="sticky-2">{{ alianza.nombre }}</td>
-    <td>{{ alianza.correo_electronico }}</td>
+    <td>{{ alianza.correo_electronico|default_if_none:"" }}</td>
     <td>{{ alianza.fecha_registro|date:"Y-m-d H:i" }}</td>
   </tr>
   {% empty %}

@@ -1,19 +1,13 @@
 from django.db import models
 from alianzas.models import Alianza
+from core.choices import (
+    SERVICIO_CHOICES,
+)
 
 
 class Cliente(models.Model):
-    class Servicio(models.TextChoices):
-        PROCOM = "PROCOM", "PROCOM"
-        MUTUALINK = "MUTUALINK", "Mutualink"
-        PRESTAMO = "PRESTAMO", "Préstamo"
-        PRAIDS = "PRAIDS", "PRAIDS"
-        MONEDEROS = "MONEDEROS", "Monederos"
-        HIDROCARBUROS = "HIDROCARBUROS", "Hidrocarburos"
-        VP360 = "VP360", "VP360"
-
     razon_social = models.CharField(max_length=200)
-    servicio = models.CharField(max_length=20, choices=Servicio.choices)
+    servicio = models.CharField(max_length=100, choices=SERVICIO_CHOICES)
     # Comisión global por servicio (0..1 almacenado)
     # Permite alta precisión (hasta 6 decimales tras convertir a fracción)
     comision_servicio = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)

@@ -52,6 +52,7 @@
           <th>%</th>
           <th>Monto comisión</th>
           <th>Estatus pago cliente</th>
+          <th>Pago comisión</th>
         </tr>
       </thead>
       <tbody>
@@ -64,9 +65,10 @@
           <td>{{ c.porcentaje|pct:2 }}</td>
           <td>{{ c.monto|currency }}</td>
           <td>{{ c.estatus_pago_dispersion }}</td>
+          <td>{% if c.pago_comision %}Sí{% else %}No{% endif %}</td>
         </tr>
         {% empty %}
-        <tr><td colspan="7">Sin registros.</td></tr>
+        <tr><td colspan="8">Sin registros.</td></tr>
         {% endfor %}
       </tbody>
     </table>
@@ -75,6 +77,7 @@
     <table>
       <thead>
         <tr>
+          <th>Cliente / Servicio</th>
           <th>Fecha pago</th>
           <th>Monto</th>
           <th>Comentario</th>
@@ -83,12 +86,13 @@
       <tbody>
         {% for p in pagos %}
         <tr>
+          <td>{{ p.comision.cliente.razon_social }} - {{ p.comision.servicio }}</td>
           <td>{{ p.fecha_pago|date:"d/m/Y" }}</td>
           <td>{{ p.monto|currency }}</td>
           <td>{{ p.comentario|default_if_none:"" }}</td>
         </tr>
         {% empty %}
-        <tr><td colspan="3">Sin pagos registrados.</td></tr>
+        <tr><td colspan="4">Sin pagos registrados.</td></tr>
         {% endfor %}
       </tbody>
     </table>

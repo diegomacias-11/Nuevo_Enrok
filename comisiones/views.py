@@ -103,42 +103,34 @@ def registrar_pago(request, comisionista_id: int = None):
     if redir and request.method != 'POST':
         return redir
     back_url = f"{reverse('comisiones_lista')}?mes={mes}&anio={anio}"
-    # Limitar comisionistas a los que tienen comisiones en el periodo
-    from alianzas.models import Alianza
-    com_ids = Comision.objects.filter(periodo_mes=mes, periodo_anio=anio) \
-        .values_list('comisionista_id', flat=True).distinct()
-    qset = Alianza.objects.filter(id__in=list(com_ids))
+    comisiones_qs = Comision.objects.filter(periodo_mes=mes, periodo_anio=anio, pago_comision=False)
+    comisionista_fixed = None
+    if comisionista_id:
+        comisiones_qs = comisiones_qs.filter(comisionista_id=comisionista_id)
+        comisionista_fixed = comisiones_qs.select_related('comisionista').first()
 
     if request.method == 'POST':
-        form = PagoComisionForm(request.POST)
-        form.fields['comisionista'].queryset = qset
+        form = PagoComisionForm(request.POST, comisiones_qs=comisiones_qs)
         if form.is_valid():
             pago = form.save(commit=False)
-            # Si vino como path param, priorizarlo; si no, tomar del form
-            if comisionista_id:
-                pago.comisionista_id = comisionista_id
-            else:
-                pago.comisionista = form.cleaned_data['comisionista']
-            pago.periodo_mes = mes
-            pago.periodo_anio = anio
+            comision = form.cleaned_data['comision']
+            pago.comision = comision
+            pago.comisionista = comision.comisionista
+            pago.periodo_mes = comision.periodo_mes
+            pago.periodo_anio = comision.periodo_anio
+            pago.monto = comision.monto
             pago.save()
+            Comision.objects.filter(pk=comision.pk).update(pago_comision=True)
             # Siempre volver al detalle del comisionista correspondiente
             return redirect(reverse('comisiones_detalle', args=[pago.comisionista_id]) + f"?mes={mes}&anio={anio}")
     else:
-        form = PagoComisionForm()
-        form.fields['comisionista'].queryset = qset
-        comisionista_fixed = None
-        if comisionista_id:
-            # Preseleccionar y bloquear edición del comisionista
-            form.fields['comisionista'].initial = comisionista_id
-            form.fields['comisionista'].disabled = True
-            comisionista_fixed = qset.filter(id=comisionista_id).first()
+        form = PagoComisionForm(comisiones_qs=comisiones_qs)
     return render(request, 'comisiones/pago_form.html', {
         'form': form,
         'back_url': back_url,
         'mes': mes,
         'anio': anio,
-        'comisionista': comisionista_fixed if comisionista_id else None,
+        'comisionista': comisionista_fixed.comisionista if comisionista_fixed else None,
         'mes_nombre': MESES_NOMBRES[mes],
     })
 
@@ -147,30 +139,20 @@ def editar_pago(request, id: int):
     pago = get_object_or_404(PagoComision, pk=id)
     mes, anio, _ = _coerce_mes_anio(request)
     back_url = f"{reverse('comisiones_detalle', args=[pago.comisionista_id])}?mes={mes}&anio={anio}"
-    # Limitar queryset al periodo del pago o al del filtro actual
-    from alianzas.models import Alianza
-    com_ids = Comision.objects.filter(periodo_mes=mes, periodo_anio=anio) \
-        .values_list('comisionista_id', flat=True).distinct()
-    qset = Alianza.objects.filter(id__in=list(com_ids))
+    comisiones_qs = Comision.objects.filter(pk=pago.comision_id)
     if request.method == 'POST':
-        form = PagoComisionForm(request.POST, instance=pago)
-        form.fields['comisionista'].queryset = qset
-        # Forzar comisionista fijo (no editable al guardar)
-        form.fields['comisionista'].disabled = True
+        form = PagoComisionForm(request.POST, instance=pago, comisiones_qs=comisiones_qs)
         if form.is_valid():
-            # Asegurar que el comisionista no cambie
             obj = form.save(commit=False)
+            obj.comision = pago.comision
             obj.comisionista_id = pago.comisionista_id
-            obj.periodo_mes = mes
-            obj.periodo_anio = anio
+            obj.periodo_mes = pago.comision.periodo_mes
+            obj.periodo_anio = pago.comision.periodo_anio
+            obj.monto = pago.comision.monto
             obj.save()
             return redirect(request.POST.get('next') or back_url)
     else:
-        form = PagoComisionForm(instance=pago)
-        form.fields['comisionista'].queryset = qset
-        # Mostrar comisionista fijo y bloquear edición
-        form.fields['comisionista'].initial = pago.comisionista_id
-        form.fields['comisionista'].disabled = True
+        form = PagoComisionForm(instance=pago, comisiones_qs=comisiones_qs)
     return render(request, 'comisiones/pago_form.html', {
         'form': form,
         'back_url': back_url,
@@ -185,7 +167,10 @@ def eliminar_pago(request, id: int):
     pago = get_object_or_404(PagoComision, pk=id)
     mes, anio, _ = _coerce_mes_anio(request)
     back_url = request.POST.get('next') or f"{reverse('comisiones_detalle', args=[pago.comisionista_id])}?mes={mes}&anio={anio}"
+    comision_id = pago.comision_id
     pago.delete()
+    if comision_id:
+        Comision.objects.filter(pk=comision_id).update(pago_comision=False)
     return redirect(back_url)
 
 

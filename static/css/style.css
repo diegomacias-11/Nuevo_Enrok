@@ -529,6 +529,12 @@ body.reportes-no-scroll { overflow: hidden; }
 }
 .filter-row .btn-filter { justify-self: center; }
 .filter-row .btn-primary { justify-self: end; position: static !important; right: auto !important; top: auto !important; transform: none !important; margin-right: .5rem !important; }
+.filter-row .actions {
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+}
 
 /* Title divider that stops before the right action button */
 .filter-cut {
@@ -1347,6 +1353,68 @@ body.reportes-no-scroll { overflow: hidden; }
   width: 12rem;
   max-width: 12rem;
 }
+.filter-container .citas-filter {
+  display: flex !important;
+  align-items: flex-end !important;
+  gap: 0.75rem !important;
+  flex: 1 1 auto !important;
+  justify-content: center !important;
+  flex-wrap: wrap !important;
+}
+.citas-filter .filter-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .2rem;
+}
+.citas-filter .filter-group label {
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin: 0;
+  padding: 0;
+}
+.citas-filter .filter-group input[type="date"],
+.citas-filter .filter-group input[type="text"],
+.citas-filter .filter-group select {
+  padding: .32rem .45rem;
+  border-radius: 6px;
+}
+.citas-filter #fecha_desde,
+.citas-filter #fecha_hasta {
+  min-width: 8rem !important;
+  width: 8rem !important;
+  max-width: 8rem !important;
+}
+.citas-filter #estatus_seguimiento,
+.citas-filter #q {
+  min-width: 12rem !important;
+}
+.citas-filter .sep {
+  width: 1px;
+  height: 2.8rem;
+  background: #ffcf56;
+  align-self: flex-end;
+  display: inline-block;
+}
+.citas-filter .btn-filter {
+  margin: 0;
+  align-self: center;
+}
+.citas-filter .btn-filtrar,
+.citas-filter .btn-limpiar {
+  align-self: flex-end;
+}
+.filter-container > .btn-primary {
+  margin-left: auto !important;
+  position: static !important;
+  transform: none !important;
+}
+@media (max-width: 900px) {
+  .filter-container .citas-filter {
+    justify-content: center !important;
+  }
+}
 .dispersiones-form .form-grid { grid-template-columns: 1fr 1fr 1fr; }
 
 /* Currency input with $ prefix */
@@ -1389,4 +1457,3 @@ textarea::placeholder {
 .user-card .user-logout { display: inline-flex; align-items: center; justify-content: center; align-self: center; padding: 0.15rem; }
 .user-card .logout-icon { display: block; height: 18px; width: 18px; filter: invert(20%); }
 .user-card .user-logout:hover .logout-icon { filter: invert(56%) sepia(10%) saturate(2000%) hue-rotate(153deg) brightness(90%) contrast(95%); }
-

@@ -2,14 +2,28 @@
 
 {% block title %}Alianzas{% endblock %}
 
+{% block extra_head %}{% endblock %}
+
 {% block filtros %}
-  <form action="{% url 'alianzas_lista' %}" method="get" class="filter-form-simple">
-    <label for="q">Buscar</label>
-    <input type="text" id="q" name="q" value="{{ request.GET.q }}" placeholder="Nombre de la alianza">
-    <button type="submit" class="btn-filter">Filtrar</button>
-    <a href="{% url 'alianzas_lista' %}" class="btn-filter">Limpiar</a>
-    <a href="{% url 'agregar_alianza' %}?next={{ request.get_full_path|urlencode }}" class="btn-primary">Nueva alianza</a>
+  <form action="{% url 'alianzas_lista' %}" method="get" class="filter-form-simple citas-filter">
+    <div class="filter-group">
+      <label for="fecha_desde">Fecha desde</label>
+      <input type="date" id="fecha_desde" name="fecha_desde" value="{{ fecha_desde }}">
+    </div>
+    <span class="sep" aria-hidden="true"></span>
+    <div class="filter-group">
+      <label for="fecha_hasta">Fecha hasta</label>
+      <input type="date" id="fecha_hasta" name="fecha_hasta" value="{{ fecha_hasta }}">
+    </div>
+    <span class="sep" aria-hidden="true"></span>
+    <div class="filter-group">
+      <label for="q">Nombre</label>
+      <input type="text" id="q" name="q" value="{{ request.GET.q }}" placeholder="Alianza">
+    </div>
+    <button type="submit" class="btn-filter btn-filtrar">Filtrar</button>
+    <a href="{% url 'alianzas_lista' %}" class="btn-filter btn-limpiar">Limpiar</a>
   </form>
+  <a href="{% url 'agregar_alianza' %}?next={{ request.get_full_path|urlencode }}" class="btn-primary">Nueva alianza</a>
 {% endblock %}
 
 {% block tabla_head %}

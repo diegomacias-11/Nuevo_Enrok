@@ -103,7 +103,12 @@ def registrar_pago(request, comisionista_id: int = None):
     if redir and request.method != 'POST':
         return redir
     back_url = f"{reverse('comisiones_lista')}?mes={mes}&anio={anio}"
-    comisiones_qs = Comision.objects.filter(periodo_mes=mes, periodo_anio=anio, pago_comision=False)
+    comisiones_qs = Comision.objects.filter(
+        periodo_mes=mes,
+        periodo_anio=anio,
+        pago_comision=False,
+        estatus_pago_dispersion='Pagado',
+    )
     comisionista_fixed = None
     if comisionista_id:
         comisiones_qs = comisiones_qs.filter(comisionista_id=comisionista_id)

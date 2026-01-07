@@ -20,7 +20,8 @@ def crear_cliente_al_cerrar(sender, instance: Cita, created: bool, **kwargs):
 
     servicio_value = None
     try:
-        servicio_choices = {choice.value for choice in Cliente.Servicio}
+        servicio_field = Cliente._meta.get_field("servicio")
+        servicio_choices = {value for value, _label in servicio_field.choices}
     except Exception:
         servicio_choices = set()
 

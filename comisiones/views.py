@@ -213,8 +213,8 @@ def enviar_detalle_comisionista(request, comisionista_id):
         messages.error(request, "No se encontraron comisiones para este comisionista.")
         return redirect(reverse('comisiones_lista') + f"?mes={mes}&anio={anio}")
 
-    destinatario = getattr(comisionista, 'correo_electronico', None)
-    if not destinatario:
+    correos = comisionista.correos_para_envio()
+    if not correos:
         messages.error(request, "El comisionista no tiene correo registrado.")
         return redirect(reverse('comisiones_detalle', args=[comisionista_id]) + f"?mes={mes}&anio={anio}")
 
@@ -223,12 +223,13 @@ def enviar_detalle_comisionista(request, comisionista_id):
 
     try:
         send_graph_mail(
-            to=destinatario,
+            to=correos[0],
             subject=subject,
             html_body=html_body,
+            cc=correos[1:] or None,
             bcc=settings.EMAIL_BCC_ALWAYS or None,
         )
-        messages.success(request, f"Reporte enviado a {destinatario}.")
+        messages.success(request, f"Reporte enviado a {', '.join(correos)}.")
     except GraphEmailError as exc:
         messages.error(request, f"No se pudo enviar el correo: {exc}")
     except Exception as exc:  # pragma: no cover

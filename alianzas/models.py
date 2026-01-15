@@ -14,3 +14,11 @@ class Alianza(models.Model):
         if self.nombre is not None:
             self.nombre = self.nombre.strip().upper()
         super().save(*args, **kwargs)
+
+    def correos_para_envio(self):
+        correos = [
+            self.correo_electronico,
+            self.correo_extra_1,
+            self.correo_extra_2,
+        ]
+        return [c.strip() for c in correos if c and c.strip()]

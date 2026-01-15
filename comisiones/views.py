@@ -7,6 +7,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.template.loader import render_to_string
 from dispersiones.models import Dispersion
+from clientes.models import Cliente
 from .models import Comision, PagoComision
 from .forms import PagoComisionForm
 from core.graph_email import send_graph_mail, GraphEmailError
@@ -47,6 +48,7 @@ def comisiones_lista(request):
     mes, anio, redir = _coerce_mes_anio(request)
     if redir:
         return redir
+    cliente_id = request.GET.get('cliente')
 
     # Recalcular liberaciones simples: Pagado => liberada
     Comision.objects.filter(periodo_mes=mes, periodo_anio=anio, dispersion__estatus_pago='Pagado').update(liberada=True, estatus_pago_dispersion='Pagado')
@@ -54,6 +56,8 @@ def comisiones_lista(request):
 
     # Listado por comisionista con total del periodo
     qs_periodo = Comision.objects.filter(periodo_mes=mes, periodo_anio=anio)
+    if cliente_id:
+        qs_periodo = qs_periodo.filter(cliente_id=cliente_id)
     resumen = list(qs_periodo \
         .values('comisionista_id', 'comisionista__nombre') \
         .annotate(total=Sum('monto'), liberadas=Sum('monto', filter=Q(liberada=True))) \
@@ -62,6 +66,8 @@ def comisiones_lista(request):
     # Pagos registrados para el periodo
     pagos = PagoComision.objects.filter(periodo_mes=mes, periodo_anio=anio) \
         .values('comisionista_id').annotate(pagos=Sum('monto'))
+    if cliente_id:
+        pagos = pagos.filter(comision__cliente_id=cliente_id)
     pagos_map = {p['comisionista_id']: p['pagos'] for p in pagos}
     for r in resumen:
         r['pagos'] = pagos_map.get(r['comisionista_id'], 0) or 0
@@ -72,12 +78,20 @@ def comisiones_lista(request):
     total_periodo = qs_periodo.aggregate(v=Sum('monto'))['v'] or 0
     total_liberado = qs_periodo.filter(liberada=True).aggregate(v=Sum('monto'))['v'] or 0
     total_pagos = PagoComision.objects.filter(periodo_mes=mes, periodo_anio=anio).aggregate(v=Sum('monto'))['v'] or 0
+    if cliente_id:
+        total_pagos = PagoComision.objects.filter(
+            periodo_mes=mes,
+            periodo_anio=anio,
+            comision__cliente_id=cliente_id,
+        ).aggregate(v=Sum('monto'))['v'] or 0
     total_pendiente = total_liberado - total_pagos
 
     meses_choices = [(i, MESES_NOMBRES[i]) for i in range(1, 13)]
     context = {
         'mes': str(mes),
         'anio': str(anio),
+        'cliente_id': str(cliente_id) if cliente_id else "",
+        'clientes': Cliente.objects.order_by('razon_social'),
         'resumen': resumen,
         'meses': list(range(1, 13)),
         'meses_choices': meses_choices,

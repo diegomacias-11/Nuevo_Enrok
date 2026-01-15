@@ -23,5 +23,65 @@
     {% endif %}
     {% block content %}{% endblock %}
   </main>
+
+  <div class="table-bottom-spacer" aria-hidden="true"></div>
+
+  <div id="table-scroll-bottom" class="table-scroll-bottom" aria-hidden="true">
+    <div class="table-scroll-inner"></div>
+  </div>
+
+  <script>
+    (function () {
+      const bottom = document.getElementById("table-scroll-bottom");
+      const inner = bottom ? bottom.querySelector(".table-scroll-inner") : null;
+      if (!bottom || !inner) return;
+      bottom.style.display = "none";
+      let activeContainer = null;
+
+      function updateWidth(container) {
+        const table = container.querySelector("table");
+        const width = table ? table.scrollWidth : container.scrollWidth;
+        if (!width) return;
+        if (width <= container.clientWidth + 1) {
+          bottom.style.display = "none";
+          return;
+        }
+        bottom.style.display = "block";
+        inner.style.width = `${width}px`;
+      }
+
+      function setActive(container) {
+        activeContainer = container;
+        updateWidth(container);
+        bottom.scrollLeft = container.scrollLeft;
+      }
+
+      function onContainerScroll(e) {
+        if (activeContainer !== e.currentTarget) return;
+        bottom.scrollLeft = activeContainer.scrollLeft;
+      }
+
+      function onBottomScroll() {
+        if (!activeContainer) return;
+        activeContainer.scrollLeft = bottom.scrollLeft;
+      }
+
+      const containers = Array.from(document.querySelectorAll(".table-container, .kanban-board"));
+      if (!containers.length) {
+        return;
+      }
+      containers.forEach((c) => {
+        c.addEventListener("mouseenter", () => setActive(c));
+        c.addEventListener("scroll", onContainerScroll);
+      });
+      bottom.addEventListener("scroll", onBottomScroll);
+      if (containers[0]) {
+        setActive(containers[0]);
+      }
+      window.addEventListener("resize", () => {
+        if (activeContainer) updateWidth(activeContainer);
+      });
+    })();
+  </script>
 </body>
 </html>

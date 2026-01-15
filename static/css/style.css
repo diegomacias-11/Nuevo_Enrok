@@ -412,14 +412,15 @@ body.reportes-no-scroll { overflow: hidden; }
 }
 
 .table-container {  background-color: #ffffff;
-  flex: 1;
-  width: 100%;
-  height: 100%;
-  border: 1px solid #003b71;
-  border-radius: 6px;
-  overflow: auto;
-  box-sizing: border-box;
-  
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    border: 1px solid #003b71;
+    border-radius: 6px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    box-sizing: border-box;
+    
   scrollbar-width: thin;
   scrollbar-color: #808b98 transparent;
 }
@@ -438,7 +439,45 @@ body.reportes-no-scroll { overflow: hidden; }
 
 
 .table-container::-webkit-scrollbar-corner {
-  background: transparent;
+    background: transparent;
+  }
+
+.table-bottom-spacer {
+  height: 26px;
+}
+
+.table-scroll-bottom {
+  position: fixed;
+  left: 0.5rem;
+  right: 0.5rem;
+  bottom: 0.35rem;
+  height: 14px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(4px);
+  z-index: 30;
+  display: none;
+  scrollbar-width: thin;
+  scrollbar-color: #808b98 transparent;
+}
+
+.table-scroll-inner {
+  height: 1px;
+}
+
+.table-scroll-bottom::-webkit-scrollbar {
+  height: 14px;
+}
+
+.table-scroll-bottom::-webkit-scrollbar-thumb {
+  background: #808b98;
+  border-radius: 6px;
+}
+
+.table-scroll-bottom::-webkit-scrollbar-thumb:hover {
+  background: #294369;
 }
 
 .table {

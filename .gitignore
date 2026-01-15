@@ -57,5 +57,6 @@ credentials/
 *.csr
 *.cer
 *.der
+looker_connection.txt
 
 backup_enrok.bat

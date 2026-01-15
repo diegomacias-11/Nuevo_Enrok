@@ -3,6 +3,8 @@ from django.db import models
 class Alianza(models.Model):
     nombre = models.CharField(max_length=100)
     correo_electronico = models.EmailField(null=True, blank=True)
+    correo_extra_1 = models.EmailField(null=True, blank=True)
+    correo_extra_2 = models.EmailField(null=True, blank=True)
     fecha_registro = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

@@ -42,7 +42,7 @@
     <select id="cliente" name="cliente">
       <option value="">Todos</option>
       {% for c in clientes %}
-        <option value="{{ c.id }}" {% if cliente_id == c.id|stringformat:'s' %}selected{% endif %}>{{ c.razon_social }}</option>
+        <option value="{{ c.id }}" {% if cliente_id == c.id|stringformat:'s' %}selected{% endif %}>{{ c.razon_social }} - {{ c.get_servicio_display }}</option>
       {% endfor %}
     </select>
     <button type="submit" class="btn-filter">Filtrar</button>

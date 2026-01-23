@@ -24,30 +24,26 @@
     {% block content %}{% endblock %}
   </main>
 
-  <div class="table-bottom-spacer" aria-hidden="true"></div>
-
   <div id="table-scroll-bottom" class="table-scroll-bottom" aria-hidden="true">
     <div class="table-scroll-inner"></div>
   </div>
 
   <script>
     (function () {
-      const bottom = document.getElementById("table-scroll-bottom");
-      const inner = bottom ? bottom.querySelector(".table-scroll-inner") : null;
-      if (!bottom || !inner) return;
-      bottom.style.display = "none";
-      let activeContainer = null;
+      var bottom = document.getElementById("table-scroll-bottom");
+      var inner = bottom ? bottom.querySelector(".table-scroll-inner") : null;
+      if (!bottom || !inner) {
+        return;
+      }
+      var activeContainer = null;
 
       function updateWidth(container) {
-        const table = container.querySelector("table");
-        const width = table ? table.scrollWidth : container.scrollWidth;
-        if (!width) return;
-        if (width <= container.clientWidth + 1) {
-          bottom.style.display = "none";
+        var table = container.querySelector("table");
+        var width = table ? table.scrollWidth : container.scrollWidth;
+        if (!width) {
           return;
         }
-        bottom.style.display = "block";
-        inner.style.width = `${width}px`;
+        inner.style.width = width + "px";
       }
 
       function setActive(container) {
@@ -57,29 +53,36 @@
       }
 
       function onContainerScroll(e) {
-        if (activeContainer !== e.currentTarget) return;
+        if (activeContainer !== e.currentTarget) {
+          return;
+        }
         bottom.scrollLeft = activeContainer.scrollLeft;
       }
 
       function onBottomScroll() {
-        if (!activeContainer) return;
+        if (!activeContainer) {
+          return;
+        }
         activeContainer.scrollLeft = bottom.scrollLeft;
       }
 
-      const containers = Array.from(document.querySelectorAll(".table-container, .kanban-board"));
-      if (!containers.length) {
-        return;
-      }
-      containers.forEach((c) => {
-        c.addEventListener("mouseenter", () => setActive(c));
+      var containers = Array.prototype.slice.call(
+        document.querySelectorAll(".table-container, .kanban-board")
+      );
+      containers.forEach(function (c) {
+        c.addEventListener("mouseenter", function () {
+          setActive(c);
+        });
         c.addEventListener("scroll", onContainerScroll);
       });
       bottom.addEventListener("scroll", onBottomScroll);
       if (containers[0]) {
         setActive(containers[0]);
       }
-      window.addEventListener("resize", () => {
-        if (activeContainer) updateWidth(activeContainer);
+      window.addEventListener("resize", function () {
+        if (activeContainer) {
+          updateWidth(activeContainer);
+        }
       });
     })();
   </script>

@@ -101,7 +101,8 @@
   --fuente-principal: 'Poppins', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --color-primary: #003b71;   
   --color-accent: #ffcf56;    
-  --color-tertiary: #355f9b;    --color-info: #71a6d1;    --color-soft: #ffffff;  
+  --color-tertiary: #355f9b;    --color-info: #71a6d1;    --color-soft: #ffffff;
+  --h-scrollbar-height: 12px;
   font-family: var(--fuente-principal);
 }
 
@@ -253,6 +254,7 @@ main {
   display: flex;
   flex-direction: column;
   flex: 1;
+  padding-bottom: calc(var(--h-scrollbar-height) + 8px);
 }
 
 
@@ -412,38 +414,24 @@ body.reportes-no-scroll { overflow: hidden; }
 }
 
 .table-container {  background-color: #ffffff;
-    flex: 1;
-    width: 100%;
-    height: 100%;
-    border: 1px solid #003b71;
-    border-radius: 6px;
-    overflow-x: hidden;
-    overflow-y: auto;
-    box-sizing: border-box;
-    
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  border: 1px solid #003b71;
+  border-radius: 6px;
+  overflow-x: auto;
+  overflow-y: visible;
+  box-sizing: border-box;
+  
   scrollbar-width: thin;
   scrollbar-color: #808b98 transparent;
 }
 
 .table-container::-webkit-scrollbar {
-  width: 10px;   
-  height: 10px;  
+  height: 0;
 }
-
-.table-container::-webkit-scrollbar-thumb {  background: #808b98;
-  border-radius: 6px;
-}
-
-.table-container::-webkit-scrollbar-thumb:hover {  background: #294369;
-}
-
-
-.table-container::-webkit-scrollbar-corner {
-    background: transparent;
-  }
-
-.table-bottom-spacer {
-  height: 26px;
+.table-container {
+  scrollbar-width: none;
 }
 
 .table-scroll-bottom {
@@ -451,14 +439,13 @@ body.reportes-no-scroll { overflow: hidden; }
   left: 0.5rem;
   right: 0.5rem;
   bottom: 0.35rem;
-  height: 14px;
+  height: var(--h-scrollbar-height);
   overflow-x: auto;
   overflow-y: hidden;
   border-radius: 6px;
   background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(4px);
-  z-index: 30;
-  display: none;
+  z-index: 1000;
   scrollbar-width: thin;
   scrollbar-color: #808b98 transparent;
 }
@@ -468,7 +455,7 @@ body.reportes-no-scroll { overflow: hidden; }
 }
 
 .table-scroll-bottom::-webkit-scrollbar {
-  height: 14px;
+  height: 10px;
 }
 
 .table-scroll-bottom::-webkit-scrollbar-thumb {
@@ -478,6 +465,10 @@ body.reportes-no-scroll { overflow: hidden; }
 
 .table-scroll-bottom::-webkit-scrollbar-thumb:hover {
   background: #294369;
+}
+
+.table-scroll-bottom::-webkit-scrollbar-corner {
+  background: transparent;
 }
 
 .table {

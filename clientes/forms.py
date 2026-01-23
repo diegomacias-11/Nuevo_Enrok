@@ -26,9 +26,10 @@ class ClienteForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Hacer obligatorio comision_servicio
+        # comision_servicio se calcula como suma de comisiones
         if 'comision_servicio' in self.fields:
-            self.fields['comision_servicio'].required = True
+            self.fields['comision_servicio'].required = False
+            self.fields['comision_servicio'].disabled = True
         # Mostrar porcentajes como enteros al editar
         if self.instance and getattr(self.instance, "pk", None) and not self.is_bound:
             for i in range(1, 11):
@@ -54,15 +55,6 @@ class ClienteForm(forms.ModelForm):
 
     def clean(self):
         cleaned = super().clean()
-        # comision por servicio
-        val_cs = cleaned.get("comision_servicio")
-        if val_cs in (None, ""):
-            self.add_error("comision_servicio", "Este campo es obligatorio.")
-        else:
-            try:
-                cleaned["comision_servicio"] = _percent_to_fraction(val_cs)
-            except Exception:
-                self.add_error("comision_servicio", "Valor inv?lido.")
         total_comisionistas = Decimal("0")
         for i in range(1, 11):
             key = f"comision{i}"
@@ -72,18 +64,11 @@ class ClienteForm(forms.ModelForm):
             try:
                 dec = _percent_to_fraction(val)
             except Exception:
+                self.add_error(key, "Valor inv?lido.")
                 continue
             cleaned[key] = dec
             total_comisionistas += dec
-        # Validar que la suma de comisionistas no exceda ni sea menor a la comisi?n del servicio
-        cs = cleaned.get("comision_servicio")
-        if cs not in (None, ""):
-            try:
-                eps = PERCENT_Q
-                if total_comisionistas > cs + eps:
-                    self.add_error(None, "La suma de porcentajes de comisionistas supera la comisi?n por servicio.")
-                elif total_comisionistas + eps < cs:
-                    self.add_error(None, "La suma de porcentajes de comisionistas es menor que la comisi?n por servicio.")
-            except Exception:
-                pass
+        if total_comisionistas > Decimal("1"):
+            self.add_error(None, "La suma de comisiones no puede exceder 100%.")
+        cleaned["comision_servicio"] = total_comisionistas
         return cleaned

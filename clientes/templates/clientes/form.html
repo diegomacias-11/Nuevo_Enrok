@@ -74,6 +74,57 @@
       {{ form.comision10 }}
     </div>
   </div>
+  <script>
+    (function () {
+      var form = document.querySelector(".clientes-form form");
+      var totalInput = document.getElementById("{{ form.comision_servicio.id_for_label }}");
+      if (!form || !totalInput) return;
+
+      function parseNumber(val) {
+        if (!val) return 0;
+        return parseFloat(String(val).replace(",", ".")) || 0;
+      }
+
+      function formatNumber(val) {
+        var fixed = val.toFixed(6);
+        return fixed.replace(/\.?0+$/, "");
+      }
+
+      function sumComisiones() {
+        var total = 0;
+        for (var i = 1; i <= 10; i++) {
+          var field = form.querySelector('[name="comision' + i + '"]');
+          if (!field) continue;
+          total += parseNumber(field.value);
+        }
+        totalInput.value = total ? formatNumber(total) : "";
+        if (total > 100) {
+          alert("La suma de comisiones no puede exceder 100%.");
+        }
+        return total;
+      }
+
+      form.addEventListener("input", function (e) {
+        if (e.target && e.target.name && e.target.name.indexOf("comision") === 0) {
+          sumComisiones();
+        }
+      });
+
+      form.addEventListener("submit", function (e) {
+        var total = sumComisiones();
+        if (total > 100) {
+          e.preventDefault();
+          return;
+        }
+        var label = total ? formatNumber(total) + "%" : "sin valor";
+        if (!window.confirm("Guardar cliente con comision de " + label + "?")) {
+          e.preventDefault();
+        }
+      });
+
+      sumComisiones();
+    })();
+  </script>
 {% endblock %}
 
 {% block extra_actions %}

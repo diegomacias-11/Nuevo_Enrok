@@ -1467,7 +1467,21 @@ body.reportes-no-scroll { overflow: hidden; }
 input,
 select,
 textarea {
-  text-align: center !important;
+    text-align: center !important;
+}
+
+input:disabled,
+select:disabled,
+textarea:disabled,
+input[readonly],
+select[readonly],
+textarea[readonly] {
+  background-color: #f3f6fb !important;
+  color: #8aa0bf !important;
+  border-color: #c7d4e6 !important;
+  box-shadow: none !important;
+  cursor: not-allowed;
+  opacity: 1;
 }
 /* Center selected option text in selects */
 select {

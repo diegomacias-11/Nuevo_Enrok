@@ -2,6 +2,7 @@
 {% load cliente_extras %}
 
 {% block title %}Registrar pago{% endblock %}
+{% block form_container_classes %}pagos-form{% endblock %}
 
 {% block back_link %}
   <section class="filter-container">
@@ -17,6 +18,38 @@
 {% endblock %}
 
 {% block form_fields %}
+  <style>
+    .pagos-form .form-grid {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .pagos-form .form-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0 auto;
+      width: 100%;
+      max-width: 1000px;
+    }
+    .pagos-form .form-container form {
+      align-items: center;
+    }
+    .pagos-form .pagos-multi {
+      align-self: stretch;
+    }
+    .pagos-form .input-currency,
+    .pagos-form input,
+    .pagos-form select,
+    .pagos-form textarea {
+      max-width: 520px;
+    }
+    .pagos-form .table-container,
+    .pagos-form .table {
+      margin-left: auto;
+      margin-right: auto;
+    }
+  </style>
   <input type="hidden" name="next" value="{{ back_url }}">
   <input type="hidden" name="mes" value="{{ mes }}">
   <input type="hidden" name="anio" value="{{ anio }}">
@@ -27,10 +60,39 @@
         <div class="fixed-center">{{ comisionista.nombre }}</div>
       {% endif %}
 
-      <label for="{{ form.comision.id_for_label }}">Pago comisión</label>
-      {{ form.comision }}
-      {% if not form.comision.field.queryset %}
-        <div class="fixed-center">No hay comisiones pendientes para este periodo.</div>
+      {% if pago %}
+        <label for="{{ form.comision.id_for_label }}">Pago comisi?n</label>
+        {{ form.comision }}
+      {% else %}
+        <label>Comisiones pendientes</label>
+        {% if not comisiones_pendientes %}
+          <div class="fixed-center">No hay comisiones pendientes para este periodo.</div>
+        {% else %}
+          <div class="table-container pagos-multi">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Seleccionar</th>
+                  <th>Cliente</th>
+                  <th>Servicio</th>
+                  <th>Monto</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for c in comisiones_pendientes %}
+                  <tr>
+                    <td>
+                      <input type="checkbox" name="comisiones" value="{{ c.id }}" data-monto="{{ c.monto }}">
+                    </td>
+                    <td>{{ c.cliente.razon_social }}</td>
+                    <td>{{ c.servicio }}</td>
+                    <td>{{ c.monto|currency }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% endif %}
       {% endif %}
 
       <label for="{{ form.fecha_pago.id_for_label }}">Fecha de pago</label>
@@ -43,22 +105,36 @@
       {{ form.comentario|default_if_none:"" }}
     </div>
   </div>
-  <script>
+    <script>
     (function () {
-      const select = document.getElementById("{{ form.comision.id_for_label }}");
-      const montoInput = document.getElementById("{{ form.monto.id_for_label }}");
-      if (!select || !montoInput) return;
-      const amounts = {
-        {% for c in form.fields.comision.queryset %}
-          "{{ c.pk }}": "{{ c.monto }}",
-        {% endfor %}
-      };
-      function updateMonto() {
-        const val = select.value;
-        montoInput.value = val && amounts[val] ? amounts[val] : "";
+      var montoInput = document.getElementById("{{ form.monto.id_for_label }}");
+      if (!montoInput) return;
+      montoInput.type = "text";
+      var checkboxes = document.querySelectorAll('input[name="comisiones"]');
+      if (!checkboxes.length) return;
+
+      function parseNumber(val) {
+        if (!val) return 0;
+        return parseFloat(String(val).replace(",", ".")) || 0;
       }
-      select.addEventListener("change", updateMonto);
+
+      function updateMonto() {
+        var total = 0;
+        checkboxes.forEach(function (cb) {
+          if (cb.checked) {
+            total += parseNumber(cb.getAttribute("data-monto"));
+          }
+        });
+        montoInput.value = total
+          ? total.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+          : "";
+      }
+
+      checkboxes.forEach(function (cb) {
+        cb.addEventListener("change", updateMonto);
+      });
       updateMonto();
     })();
   </script>
+
 {% endblock %}

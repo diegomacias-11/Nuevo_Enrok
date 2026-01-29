@@ -19,6 +19,7 @@ class PagoComisionForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         comisiones_qs = kwargs.pop('comisiones_qs', None)
+        multi_mode = kwargs.pop('multi_mode', False)
         super().__init__(*args, **kwargs)
         # Desplegable limitado a las comisiones pendientes recibidas desde la vista
         if comisiones_qs is not None:
@@ -30,6 +31,8 @@ class PagoComisionForm(forms.ModelForm):
         self.fields['monto'].required = False
         self.fields['monto'].disabled = True
         self.fields['monto'].widget.attrs['readonly'] = True
+        if multi_mode:
+            self.fields['comision'].required = False
 
         # Asegurar que se vea la fecha en ediciones
         if self.instance and getattr(self.instance, 'pk', None) and not self.is_bound:

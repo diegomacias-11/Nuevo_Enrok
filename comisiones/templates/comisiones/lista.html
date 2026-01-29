@@ -48,7 +48,6 @@
     <button type="submit" class="btn-filter">Filtrar</button>
     <a href="{% url 'comisiones_lista' %}?mes={{ mes }}&anio={{ anio }}" class="btn-filter btn-limpiar">Limpiar</a>
   </form>
-  <a href="{% url 'comisiones_registrar_pago' %}?mes={{ mes }}&anio={{ anio }}" class="btn-primary">Registrar pago</a>
 {% endblock %}
 
 {% block tabla_head %}

@@ -2,6 +2,7 @@ from datetime import date
 from calendar import monthrange
 from django.conf import settings
 from django.contrib import messages
+from django.db import transaction
 from django.db.models import Sum, Q, Count
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
@@ -129,21 +130,34 @@ def registrar_pago(request, comisionista_id: int = None):
         comisionista_fixed = comisiones_qs.select_related('comisionista').first()
 
     if request.method == 'POST':
-        form = PagoComisionForm(request.POST, comisiones_qs=comisiones_qs)
-        if form.is_valid():
-            pago = form.save(commit=False)
-            comision = form.cleaned_data['comision']
-            pago.comision = comision
-            pago.comisionista = comision.comisionista
-            pago.periodo_mes = comision.periodo_mes
-            pago.periodo_anio = comision.periodo_anio
-            pago.monto = comision.monto
-            pago.save()
-            Comision.objects.filter(pk=comision.pk).update(pago_comision=True)
-            # Siempre volver al detalle del comisionista correspondiente
-            return redirect(reverse('comisiones_detalle', args=[pago.comisionista_id]) + f"?mes={mes}&anio={anio}")
+        form = PagoComisionForm(request.POST, comisiones_qs=comisiones_qs, multi_mode=True)
+        seleccion = request.POST.getlist("comisiones")
+        if not seleccion:
+            messages.error(request, "Selecciona al menos una comisiÃ³n.")
+        elif form.is_valid():
+            comisiones_sel = list(comisiones_qs.filter(id__in=seleccion))
+            if len(comisiones_sel) != len(set(seleccion)):
+                messages.error(request, "Hay comisiones invÃ¡lidas o ya pagadas.")
+            else:
+                with transaction.atomic():
+                    pagos_crear = []
+                    for comision in comisiones_sel:
+                        pagos_crear.append(PagoComision(
+                            comision=comision,
+                            comisionista=comision.comisionista,
+                            periodo_mes=comision.periodo_mes,
+                            periodo_anio=comision.periodo_anio,
+                            monto=comision.monto,
+                            fecha_pago=form.cleaned_data.get("fecha_pago"),
+                            comentario=form.cleaned_data.get("comentario"),
+                        ))
+                    PagoComision.objects.bulk_create(pagos_crear)
+                    Comision.objects.filter(id__in=seleccion).update(pago_comision=True)
+                if comisionista_id:
+                    return redirect(reverse('comisiones_detalle', args=[comisionista_id]) + f"?mes={mes}&anio={anio}")
+                return redirect(reverse('comisiones_lista') + f"?mes={mes}&anio={anio}")
     else:
-        form = PagoComisionForm(comisiones_qs=comisiones_qs)
+        form = PagoComisionForm(comisiones_qs=comisiones_qs, multi_mode=True)
     return render(request, 'comisiones/pago_form.html', {
         'form': form,
         'back_url': back_url,
@@ -151,6 +165,7 @@ def registrar_pago(request, comisionista_id: int = None):
         'anio': anio,
         'comisionista': comisionista_fixed.comisionista if comisionista_fixed else None,
         'mes_nombre': MESES_NOMBRES[mes],
+        'comisiones_pendientes': comisiones_qs.select_related('cliente', 'comisionista'),
     })
 
 

@@ -88,26 +88,28 @@
             <table class="table">
               <thead>
                 <tr>
-                  <th>Cliente / Servicio</th>
+                  <th>Acciones</th>
+                  <th>Cliente</th>
+                  <th>Servicio</th>
                   <th>Fecha pago</th>
                   <th>Monto</th>
                   <th>Comentario</th>
-                  <th>Acciones</th>
                 </tr>
               </thead>
               <tbody>
                 {% for p in pagos %}
                 <tr>
-                  <td>{{ p.comision.cliente.razon_social }} - {{ p.comision.servicio }}</td>
-                  <td>{{ p.fecha_pago|date:"d/m/Y" }}</td>
-                  <td>{{ p.monto|currency }}</td>
-                  <td>{{ p.comentario|default_if_none:"" }}</td>
                   <td>
                     <a class="btn-detalle" href="{% url 'comisiones_editar_pago' p.id %}?mes={{ mes }}&anio={{ anio }}">Editar</a>
                   </td>
+                  <td>{{ p.comision.cliente.razon_social }}</td>
+                  <td>{{ p.comision.servicio }}</td>
+                  <td>{{ p.fecha_pago|date:"d/m/Y" }}</td>
+                  <td>{{ p.monto|currency }}</td>
+                  <td>{{ p.comentario|default_if_none:"" }}</td>
                 </tr>
                 {% empty %}
-                <tr><td colspan="5">Sin pagos registrados.</td></tr>
+                <tr><td colspan="6">Sin pagos registrados.</td></tr>
                 {% endfor %}
               </tbody>
             </table>

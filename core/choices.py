@@ -31,6 +31,10 @@ SERVICIO_CHOICES = [
     ("VP360", "VP360"),
     ("Préstamos", "Préstamos"),
     ("Reembolsos", "Reembolsos"),
+    ("Licitación", "Licitación"),
+    ("Creación de empresa", "Creación de empresa"),
+    ("DC-3", "DC-3"),
+    ("Venta de combustible", "Venta de combustible"),
 ]
 
 VENDEDOR_CHOICES = [

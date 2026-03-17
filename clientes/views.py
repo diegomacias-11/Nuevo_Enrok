@@ -1,5 +1,6 @@
 from datetime import datetime, time
 
+from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
@@ -7,16 +8,26 @@ from .models import Cliente
 from .forms import ClienteForm
 from django.contrib import messages
 from decimal import Decimal
+from core.choices import SERVICIO_CHOICES
 
 
 def clientes_lista(request):
     q = (request.GET.get("q") or "").strip()
+    alianza = (request.GET.get("alianza") or "").strip()
+    servicio = (request.GET.get("servicio") or "").strip()
     fecha_desde = request.GET.get("fecha_desde") or ""
     fecha_hasta = request.GET.get("fecha_hasta") or ""
 
     qs = Cliente.objects.all()
     if q:
         qs = qs.filter(razon_social__icontains=q)
+    if alianza:
+        alianza_filter = Q()
+        for i in range(1, 11):
+            alianza_filter |= Q(**{f"comisionista{i}__nombre__icontains": alianza})
+        qs = qs.filter(alianza_filter).distinct()
+    if servicio:
+        qs = qs.filter(servicio=servicio)
     tz = timezone.get_current_timezone()
     if fecha_desde:
         try:
@@ -37,6 +48,9 @@ def clientes_lista(request):
     context = {
         "clientes": clientes,
         "q": q,
+        "alianza": alianza,
+        "servicio": servicio,
+        "servicio_choices": SERVICIO_CHOICES,
         "fecha_desde": fecha_desde,
         "fecha_hasta": fecha_hasta,
     }

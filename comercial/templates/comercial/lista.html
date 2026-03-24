@@ -25,6 +25,11 @@
         {% endfor %}
       </select>
     </div>
+    <span class="sep" aria-hidden="true"></span>
+    <div class="filter-group">
+      <label for="prospecto">Prospecto</label>
+      <input type="text" id="prospecto" name="prospecto" value="{{ prospecto }}" placeholder="Buscar prospecto" />
+    </div>
     <button type="submit" class="btn-filter btn-filtrar">Filtrar</button>
     <a href="{% url 'citas_lista' %}" class="btn-filter btn-limpiar">Limpiar</a>
   </form>

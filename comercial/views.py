@@ -94,9 +94,13 @@ def _initial_desde_cita(cita: Cita) -> dict:
 
 def citas_lista(request: HttpRequest) -> HttpResponse:
     citas = Cita.objects.all().order_by("-fecha_registro")
+    prospecto = (request.GET.get("prospecto") or "").strip()
     fecha_desde = request.GET.get("fecha_desde") or ""
     fecha_hasta = request.GET.get("fecha_hasta") or ""
     estatus_seguimiento = request.GET.get("estatus_seguimiento") or ""
+
+    if prospecto:
+        citas = citas.filter(prospecto__icontains=prospecto)
 
     tz = timezone.get_current_timezone()
     if fecha_desde:
@@ -117,6 +121,7 @@ def citas_lista(request: HttpRequest) -> HttpResponse:
         citas = citas.filter(estatus_seguimiento=estatus_seguimiento)
     context = {
         "citas": citas,
+        "prospecto": prospecto,
         "fecha_desde": fecha_desde,
         "fecha_hasta": fecha_hasta,
         "estatus_seguimiento": estatus_seguimiento,

@@ -1457,7 +1457,8 @@ body.reportes-no-scroll { overflow: hidden; }
   max-width: 8rem !important;
 }
 .citas-filter #estatus_seguimiento,
-.citas-filter #q {
+.citas-filter #q,
+.citas-filter #prospecto {
   min-width: 12rem !important;
 }
 .citas-filter .sep {

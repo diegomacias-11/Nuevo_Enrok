@@ -18,8 +18,23 @@
     </div>
     <span class="sep" aria-hidden="true"></span>
     <div class="filter-group">
-      <label for="q">Nombre</label>
-      <input type="text" id="q" name="q" value="{{ request.GET.q }}" placeholder="Razón Social">
+      <label for="q">Cliente</label>
+      <input type="text" id="q" name="q" value="{{ q }}" placeholder="Razón Social">
+    </div>
+    <span class="sep" aria-hidden="true"></span>
+    <div class="filter-group">
+      <label for="alianza">Alianza</label>
+      <input type="text" id="alianza" name="alianza" value="{{ alianza }}" placeholder="Buscar alianza">
+    </div>
+    <span class="sep" aria-hidden="true"></span>
+    <div class="filter-group">
+      <label for="servicio">Servicio</label>
+      <select id="servicio" name="servicio">
+        <option value="">Todos</option>
+        {% for value, label in servicio_choices %}
+          <option value="{{ value }}"{% if servicio == value %} selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
     </div>
     <button type="submit" class="btn-filter btn-filtrar">Filtrar</button>
     <a href="{% url 'clientes_lista' %}" class="btn-filter btn-limpiar">Limpiar</a>

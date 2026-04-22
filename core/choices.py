@@ -41,6 +41,8 @@ VENDEDOR_CHOICES = [
     ("Bernardo", "Bernardo"),
     ("Alfredo", "Alfredo"),
     ("Gabriel", "Gabriel"),
+    ("Noah", "Noah"),
+    ("Luis Q.", "Luis Q."),
 ]
 
 ESTATUS_CITA_CHOICES = [

@@ -2,6 +2,8 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
+from core.scope import is_ventas_user
+
 from .models import Cita
 
 
@@ -46,18 +48,25 @@ class CitaForm(forms.ModelForm):
         }
         field_classes = {
             "vendedor_usuario": VendedorUsuarioChoiceField,
-        }
+    }
 
     def __init__(self, *args, **kwargs):
+        request_user = kwargs.pop("request_user", None)
         super().__init__(*args, **kwargs)
 
         user_model = get_user_model()
-        self.fields["vendedor_usuario"].queryset = (
+        vendedores_qs = (
             user_model.objects.filter(groups__name="Ventas", is_active=True)
             .distinct()
             .order_by("first_name", "last_name", "username")
         )
+        self.fields["vendedor_usuario"].queryset = vendedores_qs
         self.fields["vendedor_usuario"].required = False
+
+        if request_user and is_ventas_user(request_user):
+            self.fields["vendedor_usuario"].queryset = user_model.objects.filter(pk=request_user.pk)
+            self.fields["vendedor_usuario"].initial = request_user
+            self.fields["vendedor_usuario"].disabled = True
 
         if getattr(self, "instance", None) and getattr(self.instance, "pk", None) and self.instance.fecha_cita:
             local_dt = timezone.localtime(self.instance.fecha_cita)

@@ -13,7 +13,7 @@ from core.access import (
     require_form_access,
     require_model_permission,
 )
-from core.scope import require_cita_change_scope, require_cita_delete_scope, scoped_cita_access
+from core.scope import is_ventas_user, require_cita_change_scope, require_cita_delete_scope, scoped_cita_access
 
 from .forms import CitaForm
 from .models import Cita, NUM_CITA_CHOICES
@@ -71,7 +71,7 @@ def citas_lista(request: HttpRequest) -> HttpResponse:
     if prospecto:
         citas = citas.filter(prospecto__icontains=prospecto)
     if vendedor:
-        citas = citas.filter(vendedor_usuario__icontains=vendedor)
+        citas = citas.filter(vendedor_usuario_id=vendedor)
 
     tz = timezone.get_current_timezone()
     if fecha_desde:
@@ -115,12 +115,16 @@ def agregar_cita(request: HttpRequest) -> HttpResponse:
         initial_data = _initial_desde_cita(origen)
     if request.method == "POST":
         back_url = request.POST.get("next") or back_url
-        form = CitaForm(request.POST)
+        form = CitaForm(request.POST, request_user=request.user)
         if form.is_valid():
-            form.save()
+            cita = form.save(commit=False)
+            if is_ventas_user(request.user):
+                cita.vendedor_usuario = request.user
+            cita.save()
+            form.save_m2m()
             return redirect(request.POST.get("next") or back_url)
     else:
-        form = CitaForm(initial=initial_data)
+        form = CitaForm(initial=initial_data, request_user=request.user)
 
     context = {"form": form, "back_url": back_url}
     context.update(access_context(access))
@@ -136,12 +140,16 @@ def editar_cita(request: HttpRequest, id: int) -> HttpResponse:
         require_model_permission(request.user, Cita, "change")
         require_cita_change_scope(request.user, cita, access)
         back_url = request.POST.get("next") or back_url
-        form = CitaForm(request.POST, instance=cita)
+        form = CitaForm(request.POST, instance=cita, request_user=request.user)
         if form.is_valid():
-            form.save()
+            cita = form.save(commit=False)
+            if is_ventas_user(request.user):
+                cita.vendedor_usuario = request.user
+            cita.save()
+            form.save_m2m()
             return redirect(request.POST.get("next") or back_url)
     else:
-        form = CitaForm(instance=cita)
+        form = CitaForm(instance=cita, request_user=request.user)
         if not access.can_change:
             disable_form_fields(form)
 

@@ -1,0 +1,19 @@
+.home-card-grid {
+  grid-template-columns: 1fr;
+}
+
+.home-card-featured-wide {
+  grid-column: 1 / -1;
+}
+
+.home-card-metrics-third {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 1rem;
+}
+
+@media (max-width: 700px) {
+  .home-card-metrics-third {
+    grid-template-columns: 1fr;
+  }
+}

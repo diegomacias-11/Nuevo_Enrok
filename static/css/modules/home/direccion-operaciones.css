@@ -1,0 +1,107 @@
+.home-card-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-auto-rows: minmax(12rem, auto);
+}
+
+.home-card-featured {
+  grid-column: span 2;
+}
+
+.home-card-alianzas {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+.home-card-servicios {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.home-card-dispersiones {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.home-card-gastos {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+.home-card-alianzas-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex: 1;
+  min-height: 0;
+}
+
+.home-card-primary-link-alianzas {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.home-card-gastos-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  flex: 1;
+  text-align: center;
+}
+
+.home-card-gastos-month {
+  color: var(--brand-support);
+  font-size: 1.45rem;
+  line-height: 1.05;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.home-card-gastos-label {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.home-card-gastos-total {
+  color: var(--brand-primary);
+  font-size: clamp(1.9rem, 3.2vw, 2.7rem);
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+@media (max-width: 1100px) {
+  .home-card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .home-card-featured {
+    grid-column: span 2;
+  }
+
+  .home-card-alianzas,
+  .home-card-gastos,
+  .home-card-servicios,
+  .home-card-dispersiones {
+    grid-column: auto;
+    grid-row: auto;
+  }
+}
+
+@media (max-width: 700px) {
+  .home-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .home-card-featured {
+    grid-column: span 1;
+  }
+}

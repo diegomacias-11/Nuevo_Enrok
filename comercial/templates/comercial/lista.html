@@ -2,21 +2,29 @@
 
 {% block title %}Citas{% endblock %}
 
+{% block page_title %}Citas{% endblock %}
+
 {% block extra_head %}{% endblock %}
+
+{% block summary_bar %}{% endblock %}
+
+{% block page_actions %}
+  <a href="{% url 'agregar_cita' %}?next={{ request.get_full_path|urlencode }}" class="btn-primary">Nueva cita</a>
+{% endblock %}
 
 {% block filtros %}
   <form method="get" class="filter-form-simple citas-filter">
-    <div class="filter-group">
+    <div class="filter-block">
       <label for="fecha_desde">Fecha desde</label>
       <input type="date" id="fecha_desde" name="fecha_desde" value="{{ fecha_desde }}" />
     </div>
-    <span class="sep" aria-hidden="true"></span>
-    <div class="filter-group">
+    <span class="filter-separator" aria-hidden="true"></span>
+    <div class="filter-block">
       <label for="fecha_hasta">Fecha hasta</label>
       <input type="date" id="fecha_hasta" name="fecha_hasta" value="{{ fecha_hasta }}" />
     </div>
-    <span class="sep" aria-hidden="true"></span>
-    <div class="filter-group">
+    <span class="filter-separator" aria-hidden="true"></span>
+    <div class="filter-block">
       <label for="estatus_seguimiento">Estatus seguimiento</label>
       <select id="estatus_seguimiento" name="estatus_seguimiento">
         <option value="">Todos</option>
@@ -25,15 +33,16 @@
         {% endfor %}
       </select>
     </div>
-    <span class="sep" aria-hidden="true"></span>
-    <div class="filter-group">
+    <span class="filter-separator" aria-hidden="true"></span>
+    <div class="filter-block">
       <label for="prospecto">Prospecto</label>
       <input type="text" id="prospecto" name="prospecto" value="{{ prospecto }}" placeholder="Buscar prospecto" />
     </div>
-    <button type="submit" class="btn-filter btn-filtrar">Filtrar</button>
-    <a href="{% url 'citas_lista' %}" class="btn-filter btn-limpiar">Limpiar</a>
+    <div class="filter-actions">
+      <button type="submit" class="btn-filter btn-filtrar">Filtrar</button>
+      <a href="{% url 'citas_lista' %}" class="btn-filter btn-limpiar">Limpiar</a>
+    </div>
   </form>
-  <a href="{% url 'agregar_cita' %}?next={{ request.get_full_path|urlencode }}" class="btn-primary">Nueva cita</a>
 {% endblock %}
 
 {% block tabla_head %}
@@ -61,7 +70,7 @@
       <td>{{ c.prospecto|default_if_none:"" }}</td>
       <td>{{ c.medio|default_if_none:"" }}</td>
       <td>{{ c.servicio|default_if_none:"" }}</td>
-      <td>{{ c.vendedor|default_if_none:"" }}</td>
+      <td>{{ c.vendedor_display }}</td>
       <td>{{ c.estatus_cita|default_if_none:"" }}</td>
       <td>{{ c.posibilidad|default_if_none:"" }}</td>
       <td>{{ c.fecha_cita|date:"l d/M/y H:i"|default_if_none:"" }}</td>
@@ -70,8 +79,8 @@
       <td>{{ c.lugar|default_if_none:"" }}</td>
     </tr>
   {% empty %}
-    <tr>
-      <td colspan="100%">Sin citas registradas</td>
+    <tr class="table-empty-row">
+      <td colspan="100%"><div class="table-empty-message">Sin citas registradas</div></td>
     </tr>
   {% endfor %}
 {% endblock %}

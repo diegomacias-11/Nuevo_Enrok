@@ -1,33 +1,29 @@
-from __future__ import annotations
-
 from django.conf import settings
 from django.http import HttpResponseRedirect
-from django.utils.deprecation import MiddlewareMixin
-from django.utils.http import urlencode
+from django.urls import reverse
 
 
-class LoginRequiredMiddleware(MiddlewareMixin):
-    """
-    Redirige a login si el usuario no esta autenticado, salvo rutas publicas.
-    """
+class LoginRequiredMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
 
-    def process_view(self, request, view_func, view_args, view_kwargs):
-        user = getattr(request, "user", None)
-        if user and user.is_authenticated:
-            return None
+    def __call__(self, request):
+        if request.user.is_authenticated or self._is_public_path(request):
+            return self.get_response(request)
 
+        return HttpResponseRedirect(settings.LOGIN_URL)
+
+    def _is_public_path(self, request):
         resolver = getattr(request, "resolver_match", None)
         url_name = resolver.url_name if resolver else None
-        public_names = {"login", "logout"}
-
         path = request.path
-        if (
-            (url_name in public_names)
-            or path.startswith(settings.STATIC_URL)
-            or path.startswith("/admin")
-        ):
-            return None
+        login_path = settings.LOGIN_URL
+        logout_path = reverse("logout")
 
-        login_url = settings.LOGIN_URL
-        next_param = urlencode({"next": request.get_full_path()})
-        return HttpResponseRedirect(f"{login_url}?{next_param}")
+        return (
+            url_name in {"login", "logout"}
+            or path == login_path
+            or path == logout_path
+            or path.startswith(settings.STATIC_URL)
+            or path.startswith("/admin/")
+        )

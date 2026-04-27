@@ -3,8 +3,13 @@
 
 {% block title %}Comisiones{% endblock %}
 
-{% block filtros %}
-  <div class="filter-title">{{ mes_nombre }} {{ anio }}</div>
+{% block page_title %}Comisiones{% endblock %}
+
+{% block page_title_meta %}
+  <div class="page-title-meta">{{ mes_nombre }} {{ anio }}</div>
+{% endblock %}
+
+{% block page_summary %}
   <div class="metrics-row">
     <div class="metric">
       <div class="metric-label">Total periodo</div>
@@ -23,30 +28,43 @@
       <div class="metric-value">{{ total_pendiente|currency }}</div>
     </div>
   </div>
+{% endblock %}
+
+{% block action_bar %}{% endblock %}
+
+{% block filtros %}
   <form action="{% url 'comisiones_lista' %}" method="get" class="filter-form-simple comisiones-filter">
-    <label for="mes">Mes</label>
-    <select id="mes" name="mes">
-      {% if meses_choices %}
-        {% for m, nombre in meses_choices %}
-          <option value="{{ m }}" {% if mes == m|stringformat:'i' %}selected{% endif %}>{{ nombre }}</option>
+    <div class="filter-block">
+      <label for="mes">Mes</label>
+      <select id="mes" name="mes">
+        {% if meses_choices %}
+          {% for m, nombre in meses_choices %}
+            <option value="{{ m }}" {% if mes == m|stringformat:'i' %}selected{% endif %}>{{ nombre }}</option>
+          {% endfor %}
+        {% else %}
+          {% for m in meses %}
+            <option value="{{ m }}" {% if mes == m|stringformat:'i' %}selected{% endif %}>{{ m|stringformat:"02d" }}</option>
+          {% endfor %}
+        {% endif %}
+      </select>
+    </div>
+    <div class="filter-block">
+      <label for="anio">Anio</label>
+      <input type="number" id="anio" name="anio" value="{{ anio }}" min="2000" max="2100">
+    </div>
+    <div class="filter-block">
+      <label for="cliente">Cliente</label>
+      <select id="cliente" name="cliente">
+        <option value="">Todos</option>
+        {% for c in clientes %}
+          <option value="{{ c.id }}" {% if cliente_id == c.id|stringformat:'s' %}selected{% endif %}>{{ c.razon_social }} - {{ c.get_servicio_display }}</option>
         {% endfor %}
-      {% else %}
-        {% for m in meses %}
-          <option value="{{ m }}" {% if mes == m|stringformat:'i' %}selected{% endif %}>{{ m|stringformat:"02d" }}</option>
-        {% endfor %}
-      {% endif %}
-    </select>
-    <label for="anio">Anio</label>
-    <input type="number" id="anio" name="anio" value="{{ anio }}" min="2000" max="2100">
-    <label for="cliente">Cliente</label>
-    <select id="cliente" name="cliente">
-      <option value="">Todos</option>
-      {% for c in clientes %}
-        <option value="{{ c.id }}" {% if cliente_id == c.id|stringformat:'s' %}selected{% endif %}>{{ c.razon_social }} - {{ c.get_servicio_display }}</option>
-      {% endfor %}
-    </select>
-    <button type="submit" class="btn-filter">Filtrar</button>
-    <a href="{% url 'comisiones_lista' %}?mes={{ mes }}&anio={{ anio }}" class="btn-filter btn-limpiar">Limpiar</a>
+      </select>
+    </div>
+    <div class="filter-actions">
+      <button type="submit" class="btn-filter">Filtrar</button>
+      <a href="{% url 'comisiones_lista' %}?mes={{ mes }}&anio={{ anio }}" class="btn-filter btn-limpiar">Limpiar</a>
+    </div>
   </form>
 {% endblock %}
 
@@ -74,6 +92,8 @@
       <td>{{ r.pendiente|default_if_none:""|currency }}</td>
     </tr>
   {% empty %}
-    <tr><td colspan="6">Sin comisiones en el periodo.</td></tr>
+    <tr class="table-empty-row">
+      <td colspan="6"><div class="table-empty-message">Sin comisiones en el periodo.</div></td>
+    </tr>
   {% endfor %}
 {% endblock %}

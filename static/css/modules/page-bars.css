@@ -1,0 +1,155 @@
+.page-filter-bar,
+.page-title-bar,
+.page-action-bar-inner {
+  width: 100%;
+  border-radius: 6px;
+  box-shadow: var(--page-shadow);
+}
+
+.page-filter-bar,
+.page-title-bar,
+.page-action-bar,
+.page-action-bar-inner {
+  margin: 0 !important;
+}
+
+.page-filter-bar:empty,
+.page-action-bar-inner:empty {
+  display: none;
+}
+
+.page-filter-bar:not(:has(*)) {
+  display: none;
+}
+
+.page-filter-bar {
+  position: relative;
+  overflow: visible;
+  background: var(--bar-bg);
+  color: var(--bar-fg);
+  padding: 0.8rem 0.95rem;
+  border: 1px solid rgba(255, 207, 86, 0.18);
+}
+
+.page-title-bar {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(89, 137, 180, 0.12)),
+    linear-gradient(135deg, #00315d 0%, #003b71 50%, #365e92 100%);
+  border: 0;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem 1.15rem;
+  text-align: center;
+}
+
+.page-title-bar::before {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 6px;
+  background: linear-gradient(90deg, #ffcf56 0%, #ffd975 50%, #ffcf56 100%);
+}
+
+.page-title-bar::after {
+  display: none;
+}
+
+.page-title-copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+  position: relative;
+  z-index: 1;
+  align-items: center;
+}
+
+.page-title {
+  margin: 0;
+  font-size: 1.3rem;
+  line-height: 1.2;
+  color: #ffffff;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.page-title-meta {
+  color: rgba(255, 207, 86, 0.95);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.page-action-bar {
+  width: 100%;
+}
+
+.page-action-bar-inner {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  align-items: center;
+  justify-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  padding: 0.65rem 0.8rem;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(89, 137, 180, 0.18)),
+    linear-gradient(135deg, rgba(28, 72, 122, 0.96) 0%, rgba(54, 94, 146, 0.96) 58%, rgba(89, 137, 180, 0.94) 100%);
+  border: 1px solid rgba(89, 137, 180, 0.34);
+  box-shadow: 0 14px 28px rgba(18, 50, 87, 0.14);
+}
+
+.page-title-actions,
+.page-action-bar-inner {
+  align-items: center;
+  justify-content: center;
+}
+
+.page-action-bar-inner > :is(a, button, input[type="submit"], input[type="button"]) {
+  width: clamp(12rem, 24vw, 16rem) !important;
+  min-width: 12rem !important;
+  max-width: 16rem !important;
+  text-align: center;
+}
+
+.page-action-bar-inner > form {
+  margin: 0;
+}
+
+.page-action-bar-inner > form > :is(a, button, input[type="submit"], input[type="button"]) {
+  width: clamp(12rem, 24vw, 16rem) !important;
+  min-width: 12rem !important;
+  max-width: 16rem !important;
+  text-align: center;
+}
+
+.page-action-bar-inner .btn-primary,
+.page-action-bar-inner .btn-filter,
+.page-action-bar-inner .btn-detalle,
+.page-action-bar-inner .btn-submit,
+.page-action-bar-inner .btn-delete {
+  margin: 0 !important;
+}
+
+@media (max-width: 900px) {
+  .page-title-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .page-title-copy {
+    align-items: center;
+  }
+
+  .page-action-bar-inner > :is(a, button, input[type="submit"], input[type="button"]),
+  .page-action-bar-inner > form > :is(a, button, input[type="submit"], input[type="button"]) {
+    width: min(100%, 14rem) !important;
+    min-width: 12rem !important;
+  }
+}

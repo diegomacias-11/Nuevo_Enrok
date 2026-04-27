@@ -4,16 +4,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}ARAU{% endblock %}</title>
+  <title>{% block title %}Enrok{% endblock %}</title>
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
-  <link rel="icon" type="image/png" href="{% static 'img/logo_nav.png' %}">
+  <link rel="icon" href="{% static 'img/fav.ico' %}">
   {% block extra_head %}{% endblock %}
   
 </head>
-<body>
+<body class="{% block body_class %}{% endblock %}">
   {% include 'includes/header.html' %}
 
-  <main>
+  <main class="app-main">
     {% if messages %}
       <ul class="messages">
         {% for message in messages %}
@@ -86,5 +86,6 @@
       });
     })();
   </script>
+  {% block extra_scripts %}{% endblock %}
 </body>
 </html>

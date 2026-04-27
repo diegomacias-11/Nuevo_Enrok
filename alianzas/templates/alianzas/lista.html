@@ -2,28 +2,37 @@
 
 {% block title %}Alianzas{% endblock %}
 
+{% block page_title %}Alianzas{% endblock %}
+
 {% block extra_head %}{% endblock %}
+
+{% block summary_bar %}{% endblock %}
+
+{% block page_actions %}
+  <a href="{% url 'agregar_alianza' %}?next={{ request.get_full_path|urlencode }}" class="btn-primary">Nueva alianza</a>
+{% endblock %}
 
 {% block filtros %}
   <form action="{% url 'alianzas_lista' %}" method="get" class="filter-form-simple citas-filter">
-    <div class="filter-group">
+    <div class="filter-block">
       <label for="fecha_desde">Fecha desde</label>
       <input type="date" id="fecha_desde" name="fecha_desde" value="{{ fecha_desde }}">
     </div>
-    <span class="sep" aria-hidden="true"></span>
-    <div class="filter-group">
+    <span class="filter-separator" aria-hidden="true"></span>
+    <div class="filter-block">
       <label for="fecha_hasta">Fecha hasta</label>
       <input type="date" id="fecha_hasta" name="fecha_hasta" value="{{ fecha_hasta }}">
     </div>
-    <span class="sep" aria-hidden="true"></span>
-    <div class="filter-group">
+    <span class="filter-separator" aria-hidden="true"></span>
+    <div class="filter-block">
       <label for="q">Nombre</label>
       <input type="text" id="q" name="q" value="{{ request.GET.q }}" placeholder="Alianza">
     </div>
-    <button type="submit" class="btn-filter btn-filtrar">Filtrar</button>
-    <a href="{% url 'alianzas_lista' %}" class="btn-filter btn-limpiar">Limpiar</a>
+    <div class="filter-actions">
+      <button type="submit" class="btn-filter btn-filtrar">Filtrar</button>
+      <a href="{% url 'alianzas_lista' %}" class="btn-filter btn-limpiar">Limpiar</a>
+    </div>
   </form>
-  <a href="{% url 'agregar_alianza' %}?next={{ request.get_full_path|urlencode }}" class="btn-primary">Nueva alianza</a>
 {% endblock %}
 
 {% block tabla_head %}
@@ -46,6 +55,8 @@
     <td>{{ alianza.fecha_registro|date:"Y-m-d H:i" }}</td>
   </tr>
   {% empty %}
-  <tr><td colspan="4">No hay alianzas registradas.</td></tr>
+  <tr class="table-empty-row">
+    <td colspan="4"><div class="table-empty-message">No hay alianzas registradas.</div></td>
+  </tr>
   {% endfor %}
 {% endblock %}

@@ -4,14 +4,24 @@ from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
+
+from core.access import (
+    access_context,
+    disable_form_fields,
+    get_model_access,
+    require_form_access,
+    require_model_permission,
+)
+from core.choices import SERVICIO_CHOICES
+
 from .models import Cliente
 from .forms import ClienteForm
-from django.contrib import messages
-from decimal import Decimal
-from core.choices import SERVICIO_CHOICES
 
 
 def clientes_lista(request):
+    access = get_model_access(request.user, Cliente)
+    require_model_permission(request.user, Cliente, "view")
+
     q = (request.GET.get("q") or "").strip()
     alianza = (request.GET.get("alianza") or "").strip()
     servicio = (request.GET.get("servicio") or "").strip()
@@ -54,10 +64,13 @@ def clientes_lista(request):
         "fecha_desde": fecha_desde,
         "fecha_hasta": fecha_hasta,
     }
+    context.update(access_context(access))
     return render(request, "clientes/lista.html", context)
 
 
 def agregar_cliente(request):
+    access = get_model_access(request.user, Cliente)
+    require_model_permission(request.user, Cliente, "add")
     back_url = request.GET.get("next") or reverse("clientes_lista")
     if request.method == "POST":
         back_url = request.POST.get("next") or back_url
@@ -67,13 +80,17 @@ def agregar_cliente(request):
             return redirect(back_url)
     else:
         form = ClienteForm()
-    return render(request, "clientes/form.html", {"form": form, "back_url": back_url})
+    context = {"form": form, "back_url": back_url}
+    context.update(access_context(access))
+    return render(request, "clientes/form.html", context)
 
 
 def editar_cliente(request, id: int):
+    access = require_form_access(request.user, Cliente)
     cliente = get_object_or_404(Cliente, pk=id)
     back_url = request.GET.get("next") or reverse("clientes_lista")
     if request.method == "POST":
+        require_model_permission(request.user, Cliente, "change")
         back_url = request.POST.get("next") or back_url
         form = ClienteForm(request.POST, instance=cliente)
         if form.is_valid():
@@ -81,11 +98,15 @@ def editar_cliente(request, id: int):
             return redirect(back_url)
     else:
         form = ClienteForm(instance=cliente)
-        # Quitar advertencia en GET: ahora la validación se hace en el formulario y bloquea guardado
-    return render(request, "clientes/form.html", {"form": form, "cliente": cliente, "back_url": back_url})
+        if access.read_only:
+            disable_form_fields(form)
+    context = {"form": form, "cliente": cliente, "back_url": back_url}
+    context.update(access_context(access))
+    return render(request, "clientes/form.html", context)
 
 
 def eliminar_cliente(request, id: int):
+    require_model_permission(request.user, Cliente, "delete")
     back_url = request.POST.get("next") or request.GET.get("next") or reverse("clientes_lista")
     cliente = get_object_or_404(Cliente, pk=id)
     cliente.delete()

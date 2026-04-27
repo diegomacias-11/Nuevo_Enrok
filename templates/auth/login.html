@@ -4,154 +4,58 @@
   {% load static %}
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inicio de sesi&oacute;n</title>
-  <link rel="icon" type="image/png" href="{% static 'img/logo_nav.png' %}">
-  <style>
-    :root {
-        --fuente-principal: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-    }
-    *,
-    *::before,
-    *::after {
-        font-family: var(--fuente-principal) !important;
-    }
-    body {
-      height: 100vh;
-      display: grid;
-      place-items: center;
-      background: url("{% static 'img/fondo.jpg' %}") center / cover no-repeat fixed;
-      background-image: linear-gradient(#00224244,#00000061), url("{% static 'img/fondo.jpg' %}");
-      background-size: auto, cover;
-      background-repeat: no-repeat, no-repeat;
-      background-attachment: scroll, fixed;
-      background-position: 0 0, center 35%;
-      margin: 0;
-      padding: 0;
-    }
-
-    .card {
-      width: 30%;
-      color: #0b1220;
-      background: #ffffff;
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 18px 40px rgba(0,0,0,.25);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-      form {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 0.8rem;
-      }
-
-      form p {
-        margin: 0;
-        width: 100%;
-        max-width: 22rem;
-        display: flex;
-        justify-content: center;
-      }
-
-      form p label {
-        display: none;
-      }
-
-      form p input {
-        width: 100%;
-        max-width: 22rem;
-        height: 2.2rem;
-        border: 2px solid #003b71;
-        border-radius: 12px;
-        padding: 0.4rem 0.6rem;
-        text-align: center;
-        font-size: 0.95rem;
-        box-sizing: border-box;
-        background: linear-gradient(135deg, #bdd1e4 0%, #e1ecfa 100%);
-        color: #000000;
-      }
-      form p input:focus{
-        outline: none;
-        border-color: #ffcf56;
-      }
-    h1 {
-      text-align: center;
-      margin-bottom: 1rem;
-      margin-top: -1rem;
-    }
-    .btn {
-      display: block;
-      width: 400px;
-      padding: 0.6rem 1.2rem;
-      color: #ffcf56;
-      background: linear-gradient(135deg, #00101f 0%, #294b7c 100%);
-      border: none;
-      font-weight: 600;
-      text-align: center;
-      font-size: 0.95rem;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: 0.3s;
-      white-space: nowrap;
-    }
-
-      .btn:hover {
-        background: linear-gradient(135deg, #002952 0%, #244a7a 100%);
-      }
-
-    select {
-        padding: 7px 8px;
-        font-size: .9rem;
-        color: #ffffff;
-        background: transparent;
-        border: none;
-        font-weight: 200;
-        text-align: center;
-        box-sizing: border-box;
-        cursor: pointer;
-        transition: 0.3s;
-    }
-
-    select option {
-        color: #00101f;
-        background-color: #ffffff;
-        text-align: center;
-    }
-
-      .actions {
-        margin: 0.5rem auto;
-        display: flex;
-        justify-content: center;
-        gap: 0.6rem;
-        width: 50%;
-        background: linear-gradient(135deg, #00101f 0%, #294b7c 100%);
-        border-radius: 12px;
-      }
-
-      .actions > * {
-        flex: 1;
-        text-align: center;
-        min-width: 0;
-      }
-  </style>
+  <title>Enrok | Inicio de sesion</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="icon" href="{% static 'img/fav.ico' %}">
 </head>
-<body>
-  <div class="card">
-    <div style="margin-bottom: 1rem;">
-      <img src="{% static 'img/logo_nav.png' %}" alt="Logo" style="max-height: 64px;">
-    </div>
-    <h1>Iniciar sesi&oacute;n</h1>
-    <form method="post">
-      {% csrf_token %}
-      {{ form.as_p }}
-      <div class="actions">
-        <button type="submit" class="btn">Iniciar sesi&oacute;n</button>
+<body class="auth-page">
+  <main class="auth-shell">
+    <section class="auth-card" aria-labelledby="auth-title">
+      <div class="auth-brand">
+        <img src="{% static 'img/logo_header.png' %}" alt="ARAU" class="auth-logo">
       </div>
-    </form>
-  </div>
 
+      <div class="auth-copy">
+        <h1 id="auth-title" class="auth-title">Iniciar sesion</h1>
+        <p class="auth-subtitle">Ingresa con tu cuenta para acceder al portal.</p>
+      </div>
+
+      {% if form.non_field_errors %}
+        <div class="auth-alert" role="alert">
+          {% for error in form.non_field_errors %}
+            <div>{{ error }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <form method="post" class="auth-form" novalidate>
+        {% csrf_token %}
+        {% for field in form %}
+          <div class="auth-field">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {% if field.name == "password" %}
+              <div class="auth-field-control auth-field-control-password">
+                {{ field }}
+                <button type="button" class="auth-password-toggle" data-password-toggle aria-label="Ver contraseña">Ver</button>
+              </div>
+            {% else %}
+              {{ field }}
+            {% endif %}
+            {% if field.errors %}
+              <div class="auth-field-errors">
+                {% for error in field.errors %}
+                  <div>{{ error }}</div>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+        {% endfor %}
+
+        <div class="auth-actions">
+          <button type="submit" class="auth-submit">Entrar</button>
+        </div>
+      </form>
+    </section>
+  </main>
 </body>
 </html>

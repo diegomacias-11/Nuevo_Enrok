@@ -1,0 +1,120 @@
+:root {
+  --fuente-principal: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --color-primary: #003b71;
+  --color-accent: #ffcf56;
+  --color-tertiary: #355f9b;
+  --color-info: #71a6d1;
+  --color-soft: #ffffff;
+  --h-scrollbar-height: 12px;
+  --page-gap: 0.6rem;
+  --page-section-gap: var(--page-gap);
+  --page-surface: #f7fbff;
+  --page-border: #003b71;
+  --page-shadow: 0 16px 34px rgba(0, 59, 113, 0.14);
+  --bar-bg: linear-gradient(135deg, #002f5a 0%, #003b71 58%, #365e92 100%);
+  --bar-fg: #f7fbff;
+  --bar-accent: #ffcf56;
+  --bar-muted: rgba(227, 239, 252, 0.78);
+  --brand-primary: #003b71;
+  --brand-support: #365e92;
+  --brand-soft: #5989b4;
+  --brand-accent: #ffcf56;
+  --surface-muted: #e9f2fa;
+  --surface-line: rgba(0, 59, 113, 0.16);
+  --text-primary: #183857;
+  --text-muted: #53769b;
+  font-family: var(--fuente-principal);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0 !important;
+  padding: 0 !important;
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--fuente-principal);
+  color: var(--text-primary);
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(circle at top left, rgba(89, 137, 180, 0.18), transparent 28%),
+    linear-gradient(180deg, #edf4fb 0%, #f9fbfe 20%, #eef4fa 100%);
+}
+
+input,
+select,
+textarea,
+button {
+  font: inherit;
+  font-family: var(--fuente-principal);
+}
+
+.app-main {
+  margin: var(--page-section-gap) 0.5rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--page-section-gap);
+  flex: 1;
+  font-size: 1rem;
+  line-height: normal;
+  padding-bottom: 0;
+}
+
+.page-shell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--page-section-gap);
+  width: 100%;
+  min-width: 0;
+}
+
+.page-shell > * {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.page-shell-list,
+.page-shell-kanban,
+.page-shell-form {
+  width: 100%;
+}
+
+.page-summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--page-section-gap);
+}
+
+.page-summary:empty {
+  display: none;
+}
+
+.page-shell .table-container,
+.page-shell .form-container,
+.page-shell .kanban-wrapper {
+  margin: 0 !important;
+}
+
+.toolbar-link-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 900px) {
+  .app-main {
+    margin-top: var(--page-section-gap);
+    margin-left: 0.35rem;
+    margin-right: 0.35rem;
+  }
+}

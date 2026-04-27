@@ -1,4 +1,5 @@
 from django.core.validators import RegexValidator
+from django.conf import settings
 from django.db import models
 
 from core.choices import (
@@ -31,7 +32,14 @@ class Cita(models.Model):
     )
     correo = models.EmailField("Correo", blank=True, null=True)
     conexion = models.CharField(max_length=150, blank=True, null=True)
-    vendedor = models.CharField(max_length=50, choices=VENDEDOR_CHOICES)
+    vendedor = models.CharField(max_length=50, choices=VENDEDOR_CHOICES, blank=True, null=True)
+    vendedor_usuario = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="citas_asignadas",
+    )
     estatus_cita = models.CharField(max_length=50, choices=ESTATUS_CITA_CHOICES, blank=True, null=True)
     numero_cita = models.CharField(max_length=10, choices=NUM_CITA_CHOICES, blank=True, null=True)
     estatus_seguimiento = models.CharField(max_length=100, choices=ESTATUS_SEGUIMIENTO_CHOICES, blank=True, null=True)
@@ -57,6 +65,12 @@ class Cita(models.Model):
 
     def __str__(self) -> str:
         return f"{self.prospecto} - {self.fecha_cita.strftime('%d/%m/%Y %H:%M')}"
+
+    @property
+    def vendedor_display(self) -> str:
+        if self.vendedor_usuario:
+            return self.vendedor_usuario.get_full_name() or self.vendedor_usuario.username
+        return self.vendedor or ""
 
     class Meta:
         ordering = ["-fecha_cita"]

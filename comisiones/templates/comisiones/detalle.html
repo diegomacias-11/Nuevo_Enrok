@@ -3,9 +3,11 @@
 
 {% block title %}Detalle de comisiones{% endblock %}
 
-{% block filtros %}
-  <div class="filter-title">{{ comisionista|default_if_none:"" }} — {{ mes_nombre }} {{ anio }}</div>
-  <div class="filter-cut"><div class="line"></div><div></div><div></div></div>
+{% block page_title_meta %}
+  <div class="page-title-meta">{{ comisionista|default_if_none:"" }} - {{ mes_nombre }} {{ anio }}</div>
+{% endblock %}
+
+{% block page_summary %}
   <div class="metrics-row">
     <div class="metric">
       <div class="metric-label">Total periodo</div>
@@ -24,25 +26,22 @@
       <div class="metric-value">{{ total_pendiente|currency }}</div>
     </div>
   </div>
-  <div class="filter-row">
-    <div></div>
-    <form action="{% url 'comisiones_lista' %}" method="get" class="filter-form-simple comisiones-filter">
-      <input type="hidden" name="mes" value="{{ mes }}">
-      <input type="hidden" name="anio" value="{{ anio }}">
-      <a href="{% url 'comisiones_lista' %}?mes={{ mes }}&anio={{ anio }}" class="btn-filter">Volver</a>
-    </form>
-    <div class="actions">
-      {% if comisionista %}
-        <a class="btn-primary" href="{% url 'comisiones_enviar_detalle' comisionista.id %}?mes={{ mes }}&anio={{ anio }}">Enviar reporte</a>
-        <a class="btn-primary" href="{% url 'comisiones_registrar_pago_by_id' comisionista.id %}?mes={{ mes }}&anio={{ anio }}">Registrar pago</a>
-      {% endif %}
-    </div>
-  </div>
+{% endblock %}
+
+{% block filter_bar %}{% endblock %}
+
+{% block page_actions %}
+  <a href="{% url 'comisiones_lista' %}?mes={{ mes }}&anio={{ anio }}" class="btn-filter">Volver</a>
+  {% if comisionista %}
+    <a class="btn-primary" href="{% url 'comisiones_enviar_detalle' comisionista.id %}?mes={{ mes }}&anio={{ anio }}">Enviar reporte</a>
+    <a class="btn-primary" href="{% url 'comisiones_registrar_pago_by_id' comisionista.id %}?mes={{ mes }}&anio={{ anio }}">Registrar pago</a>
+  {% endif %}
 {% endblock %}
 
 {% block tabla_head %}
   <tr><th class="embed"></th></tr>
 {% endblock %}
+
 {% block tabla_body %}
   <tr>
     <td class="embed">
@@ -76,7 +75,9 @@
                     <td><input type="checkbox" style="accent-color:#ffcf56; pointer-events:none; cursor:default" {% if c.pago_comision %}checked{% endif %}></td>
                   </tr>
                 {% empty %}
-                  <tr><td colspan="8">Sin registros.</td></tr>
+                  <tr class="table-empty-row">
+                    <td colspan="8"><div class="table-empty-message">Sin registros.</div></td>
+                  </tr>
                 {% endfor %}
               </tbody>
             </table>
@@ -109,7 +110,9 @@
                   <td>{{ p.comentario|default_if_none:"" }}</td>
                 </tr>
                 {% empty %}
-                <tr><td colspan="6">Sin pagos registrados.</td></tr>
+                <tr class="table-empty-row">
+                  <td colspan="6"><div class="table-empty-message">Sin pagos registrados.</div></td>
+                </tr>
                 {% endfor %}
               </tbody>
             </table>

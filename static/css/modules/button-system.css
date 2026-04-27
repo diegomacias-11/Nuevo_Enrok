@@ -1,0 +1,166 @@
+.btn-primary,
+.btn-filter,
+.btn-submit,
+.btn-detalle,
+.btn-delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  min-height: 2rem;
+  padding: 0.4rem 0.82rem;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  font-weight: 700;
+  line-height: 1.05;
+  text-decoration: none;
+  vertical-align: middle;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 3px 10px rgba(0, 59, 113, 0.1) !important;
+}
+
+.btn-primary:hover,
+.btn-filter:hover,
+.btn-submit:hover,
+.btn-detalle:hover,
+.btn-delete:hover {
+  transform: translateY(-1px) !important;
+  filter: brightness(0.9) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 6px 14px rgba(0, 59, 113, 0.14) !important;
+}
+
+.btn-primary,
+.btn-submit,
+.page-action-bar-inner .btn-filter {
+  background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-support) 68%, var(--brand-soft) 100%) !important;
+  color: #ffffff !important;
+  border-color: rgba(54, 94, 146, 0.22) !important;
+}
+
+.page-action-bar-inner .btn-primary,
+.page-action-bar-inner .btn-filter,
+.page-action-bar-inner .btn-submit,
+.page-action-bar-inner .btn-delete,
+.page-action-bar-inner .btn-detalle {
+  min-height: 1.9rem;
+  padding: 0.28rem 0.72rem;
+  border-radius: 9px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: 0 8px 18px rgba(10, 36, 67, 0.16) !important;
+}
+
+.page-action-bar-inner .btn-primary,
+.page-action-bar-inner .btn-filter,
+.page-action-bar-inner .btn-submit {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, #dfeaf7 100%) !important;
+  color: var(--brand-primary) !important;
+  border-color: rgba(54, 94, 146, 0.22) !important;
+}
+
+.page-action-bar-inner .btn-detalle {
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+.page-action-bar-inner .btn-delete {
+  background: linear-gradient(135deg, #9a3440 0%, #bd4854 100%) !important;
+  color: #ffffff !important;
+  border-color: rgba(154, 52, 64, 0.24) !important;
+}
+
+.page-filter-bar .btn-filter {
+  min-height: 20px !important;
+  padding: 0.02rem 0.45rem !important;
+  border-radius: 12px !important;
+  box-shadow: 0 1px 3px rgba(0, 33, 66, 0.08) !important;
+  font-size: 0.76rem !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  font-family: inherit !important;
+  letter-spacing: 0 !important;
+  text-rendering: geometricPrecision;
+}
+
+.page-filter-bar button.btn-filter,
+.page-filter-bar input.btn-filter[type="submit"] {
+  background: linear-gradient(180deg, #ffe6a0 0%, var(--brand-accent) 100%) !important;
+  color: var(--brand-primary) !important;
+  border-color: rgba(255, 207, 86, 0.28) !important;
+}
+
+.page-filter-bar a.btn-filter {
+  background: rgba(255, 255, 255, 0.24) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.34) !important;
+}
+
+.page-filter-bar button.btn-filter:hover,
+.page-filter-bar input.btn-filter[type="submit"]:hover,
+.page-filter-bar a.btn-filter:hover {
+  transform: translateY(-1px) !important;
+  filter: brightness(0.9) !important;
+  box-shadow: 0 8px 16px rgba(0, 26, 51, 0.16) !important;
+}
+
+.btn-detalle {
+  min-height: 1.72rem;
+  padding: 0.18rem 0.52rem;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #4d76a9 0%, #365e92 100%) !important;
+  color: #ffffff !important;
+  border-color: rgba(54, 94, 146, 0.42) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 3px 8px rgba(33, 67, 107, 0.12) !important;
+  font-size: 0.83rem;
+  line-height: 1.05;
+  text-align: center;
+}
+
+.btn-detalle:hover {
+  color: #ffffff !important;
+}
+
+.table td.col-actions,
+.table th.col-actions {
+  width: var(--sticky-col-1) !important;
+  min-width: var(--sticky-col-1) !important;
+  max-width: var(--sticky-col-1) !important;
+  text-align: center !important;
+  vertical-align: middle !important;
+}
+
+.table td.col-actions .btn-detalle,
+.table-container td.col-actions .btn-detalle {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 4.2rem !important;
+  min-width: 4.2rem !important;
+  max-width: 4.2rem !important;
+  height: 1.72rem !important;
+  padding: 0 !important;
+  margin: 0 auto !important;
+  vertical-align: middle !important;
+}
+
+.btn-delete {
+  background: linear-gradient(135deg, #a62d38 0%, #c84451 100%) !important;
+  color: #ffffff !important;
+  border-color: rgba(166, 45, 56, 0.2) !important;
+}
+
+.form-container .btn-submit,
+.form-container .btn-delete {
+  min-width: 10.5rem;
+  align-self: center;
+}

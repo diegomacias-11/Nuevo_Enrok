@@ -4,11 +4,22 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
 
+from core.access import (
+    access_context,
+    disable_form_fields,
+    get_model_access,
+    require_form_access,
+    require_model_permission,
+)
+
 from .models import Alianza
 from .forms import AlianzaForm
 
 
 def alianzas_lista(request):
+    access = get_model_access(request.user, Alianza)
+    require_model_permission(request.user, Alianza, "view")
+
     q = (request.GET.get("q") or "").strip()
     fecha_desde = request.GET.get("fecha_desde") or ""
     fecha_hasta = request.GET.get("fecha_hasta") or ""
@@ -41,10 +52,13 @@ def alianzas_lista(request):
         "fecha_desde": fecha_desde,
         "fecha_hasta": fecha_hasta,
     }
+    context.update(access_context(access))
     return render(request, "alianzas/lista.html", context)
 
 
 def agregar_alianza(request):
+    access = get_model_access(request.user, Alianza)
+    require_model_permission(request.user, Alianza, "add")
     back_url = request.GET.get("next") or reverse("alianzas_lista")
 
     if request.method == "POST":
@@ -60,14 +74,17 @@ def agregar_alianza(request):
         "form": form,
         "back_url": back_url,
     }
+    context.update(access_context(access))
     return render(request, "alianzas/form.html", context)
 
 
 def editar_alianza(request, id: int):
+    access = require_form_access(request.user, Alianza)
     alianza = get_object_or_404(Alianza, pk=id)
     back_url = request.GET.get("next") or reverse("alianzas_lista")
 
     if request.method == "POST":
+        require_model_permission(request.user, Alianza, "change")
         back_url = request.POST.get("next") or back_url
         form = AlianzaForm(request.POST, instance=alianza)
         if form.is_valid():
@@ -75,16 +92,20 @@ def editar_alianza(request, id: int):
             return redirect(back_url)
     else:
         form = AlianzaForm(instance=alianza)
+        if access.read_only:
+            disable_form_fields(form)
 
     context = {
         "form": form,
         "alianza": alianza,
         "back_url": back_url,
     }
+    context.update(access_context(access))
     return render(request, "alianzas/form.html", context)
 
 
 def eliminar_alianza(request, id: int):
+    require_model_permission(request.user, Alianza, "delete")
     back_url = request.POST.get("next") or request.GET.get("next") or reverse("alianzas_lista")
     alianza = get_object_or_404(Alianza, pk=id)
     alianza.delete()

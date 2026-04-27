@@ -4,18 +4,53 @@
 {% block title %}Formulario{% endblock %}
 
 {% block content %}
-  <main>
-  {% block back_link %}{% endblock %}
+  <section class="page-shell page-shell-form">
+    <section class="page-title-bar">
+      <div class="page-title-copy">
+        <h1 class="page-title">{% block page_title %}Formulario{% endblock %}</h1>
+        {% block page_title_meta %}{% endblock %}
+      </div>
+    </section>
 
-  <div class="form-container {% block form_container_classes %}{% endblock %}">
-    <form method="post">
-      {% csrf_token %}
-      {% block form_fields %}
-        <!-- Aquí van los campos específicos del formulario hijo -->
-        {% endblock %}
-        <button type="submit" class="btn-submit">Guardar</button>
-        {% block extra_actions %}{% endblock %}
+    {% block summary_bar %}
+      <section class="page-summary">{% block page_summary %}{% endblock %}</section>
+    {% endblock %}
+
+    {% block action_bar %}
+      <section class="page-action-bar">
+        <div class="page-action-bar-inner">
+          {% block back_link %}{% endblock %}
+          {% block page_title_actions %}{% endblock %}
+          {% block page_actions %}{% endblock %}
+        </div>
+      </section>
+    {% endblock %}
+
+    <div class="form-container work-panel {% block form_container_classes %}{% endblock %}">
+      <form method="post" action="{% block form_action %}{% endblock %}" enctype="{% block form_enctype %}application/x-www-form-urlencoded{% endblock %}" class="work-panel-form {% block form_tag_classes %}{% endblock %}">
+        {% csrf_token %}
+        {% block form_hidden %}{% endblock %}
+
+        <div class="work-panel-body">
+          <section class="page-record-bar">{% block page_record_bar %}{% endblock %}</section>
+          {% block form_intro %}{% endblock %}
+          {% block form_sections %}
+            <section class="panel-section panel-section-form">
+              <div class="panel-section-body">
+                {% block form_fields %}{% endblock %}
+              </div>
+            </section>
+          {% endblock %}
+        </div>
+
+        <div class="form-submit-bar">
+          <div class="form-submit-bar-inner">
+            <button type="submit" class="btn-submit">Guardar</button>
+            {% block extra_actions %}{% endblock %}
+          </div>
+        </div>
       </form>
-  </div>
-  </main>
+    </div>
+    {% block after_form %}{% endblock %}
+  </section>
 {% endblock %}

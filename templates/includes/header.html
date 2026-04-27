@@ -1,21 +1,21 @@
 {% load static %}
 <header class="main-header">
   <div class="logo-title">
-    <img src="{% static 'img/logo_header.png' %}" alt="ARAU" class="logo" />
+    <img src="{% static 'img/logo_header.png' %}" alt="Enrok" class="logo" />
   </div>
   <nav class="main-nav">
     <a href="{% url 'citas_lista' %}"
-       class="{% if 'citas' in request.path %}active{% endif %}">Citas</a>
+       class="{% if 'citas' in request.path %}active{% endif %}"><span class="nav-title">Citas</span></a>
     <a href="{% url 'alianzas_lista' %}"
-       class="{% if 'alianzas' in request.path %}active{% endif %}">Alianzas</a>
+       class="{% if 'alianzas' in request.path %}active{% endif %}"><span class="nav-title">Alianzas</span></a>
     <a href="{% url 'clientes_lista' %}"
-       class="{% if 'clientes' in request.path %}active{% endif %}">Clientes</a>
+       class="{% if 'clientes' in request.path %}active{% endif %}"><span class="nav-title">Clientes</span></a>
     <a href="{% url 'dispersiones_lista' %}"
-       class="{% if 'dispersiones' in request.path %}active{% endif %}">Dispersiones</a>
+       class="{% if 'dispersiones' in request.path %}active{% endif %}"><span class="nav-title">Dispersiones</span></a>
     <a href="{% url 'comisiones_lista' %}"
-       class="{% if 'comisiones' in request.path %}active{% endif %}">Comisiones</a>
+       class="{% if 'comisiones' in request.path %}active{% endif %}"><span class="nav-title">Comisiones</span></a>
     <a href="{% url 'reporte_looker' %}"
-       class="{% if 'reportes' in request.path %}active{% endif %}">Reportes</a>
+       class="{% if 'reportes' in request.path %}active{% endif %}"><span class="nav-title">Reportes</span></a>
   </nav>
   <div class="user-card">
     <div class="user-meta">
@@ -28,7 +28,7 @@
         {% endwith %}
       </div>
     </div>
-    <a href="{% url 'logout' %}?next={% url 'login' %}" class="user-logout" title="Cerrar sesi&oacute;n">
+    <a href="{% url 'logout' %}" class="user-logout" title="Cerrar sesi&oacute;n">
       <img src="{% static 'img/logout.png' %}" alt="Cerrar sesi&oacute;n" class="logout-icon" />
     </a>
   </div>

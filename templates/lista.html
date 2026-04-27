@@ -1,30 +1,68 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}Lista{% endblock %}
 
 {% block content %}
-<main>
-  
-  <!--Sección de filtros -->
-  <section class="filter-container">
-    {% block filtros %}
-    <!-- aquí meterás inputs, selects, botones -->
-    {% endblock %}
-  </section>
+<section class="page-shell page-shell-list">
+  <div class="lista-sticky-stack">
+    <section class="page-title-bar">
+      <div class="page-title-copy">
+        <h1 class="page-title">{% block page_title %}Lista{% endblock %}</h1>
+        {% block page_title_meta %}{% endblock %}
+      </div>
+    </section>
 
-  <!--Sección de contenido dinámico (tablas, tarjetas, etc.) -->
-  <div class="table-container">
-    <table class="table">
-      <thead>
-        {% block tabla_head %}{% endblock %}
-      </thead>
-      <tbody>
-        {% block tabla_body %}{% endblock %}
-      </tbody>
-    </table>
+    {% block filter_bar %}
+      <section class="filter-container page-filter-bar lista-sticky-filter-container">
+        {% block filtros %}{% endblock %}
+      </section>
+    {% endblock %}
+
+    {% block summary_bar %}
+      <section class="page-summary lista-sticky-resumen-slot">
+        {% block page_summary %}{% endblock %}
+      </section>
+    {% endblock %}
+
+    {% block action_bar %}
+      <section class="page-action-bar lista-sticky-action-container">
+        <div class="page-action-bar-inner">
+          {% block page_title_actions %}{% endblock %}
+          {% block page_actions %}{% endblock %}
+        </div>
+      </section>
+    {% endblock %}
   </div>
 
-  <!--Bloque opcional para cosas debajo de la tabla -->
+  <div class="lista-table-stack">
+    <div class="lista-head-container" hidden aria-hidden="true">
+      <div class="lista-head-scroll" aria-hidden="true">
+        <div class="lista-head-scroll-inner"></div>
+      </div>
+      <div class="lista-head-viewport">
+        <table class="table lista-head-table">
+          <thead></thead>
+        </table>
+      </div>
+    </div>
+
+    <div class="table-container lista-table-container">
+      <table class="table lista-body-table">
+        <thead>
+          {% block tabla_head %}{% endblock %}
+        </thead>
+        <tbody>
+          {% block tabla_body %}{% endblock %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
   {% block extra_content %}{% endblock %}
-  
-</main>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+  {{ block.super }}
+  <script src="{% static 'js/lista_sticky.js' %}"></script>
 {% endblock %}

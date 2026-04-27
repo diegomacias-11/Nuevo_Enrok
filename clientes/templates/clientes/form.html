@@ -4,10 +4,12 @@
 
 {% block title %}{% if cliente %}Editar Cliente{% else %}Nuevo Cliente{% endif %}{% endblock %}
 
+{% block page_title %}{% if cliente %}Editar Cliente{% else %}Nuevo Cliente{% endif %}{% endblock %}
+
+{% block summary_bar %}{% endblock %}
+
 {% block back_link %}
-  <section class="filter-container">
-    <a href="{{ back_url }}" class="btn-filter">Volver</a>
-  </section>
+  <a href="{{ back_url }}" class="btn-filter">Volver</a>
 {% endblock %}
 
 {% block form_fields %}

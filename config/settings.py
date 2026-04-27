@@ -156,7 +156,7 @@ if DEBUG:
     STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 
 LOGIN_URL = '/login/'
-LOGIN_REDIRECT_URL = '/alianzas/'
+LOGIN_REDIRECT_URL = '/citas/'
 LOGOUT_REDIRECT_URL = '/login/'
 SESSION_COOKIE_AGE = 3600  # 1 hora
 SESSION_SAVE_EVERY_REQUEST = True  # renovar inactividad en cada request

@@ -4,11 +4,14 @@
 {% block title %}Registrar pago{% endblock %}
 {% block form_container_classes %}pagos-form{% endblock %}
 
+{% block page_title_meta %}
+  <div class="page-title-meta">{{ mes_nombre }} {{ anio }}</div>
+{% endblock %}
+
+{% block summary_bar %}{% endblock %}
+
 {% block back_link %}
-  <section class="filter-container">
-    <div class="filter-title">Registrar pago — {{ mes_nombre }} {{ anio }}</div>
-    <a href="{{ back_url }}" class="btn-filter">Volver</a>
-  </section>
+  <a href="{{ back_url }}" class="btn-filter">Volver</a>
 {% endblock %}
 
 {% block extra_actions %}
@@ -32,7 +35,7 @@
       width: 100%;
       max-width: 1000px;
     }
-    .pagos-form .form-container form {
+    .pagos-form form {
       align-items: center;
     }
     .pagos-form .pagos-multi {

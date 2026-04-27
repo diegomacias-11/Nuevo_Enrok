@@ -1,0 +1,118 @@
+.home-cliente-shell {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.home-cliente-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.home-cliente-hero-panel {
+  align-content: start;
+  justify-items: stretch;
+  text-align: center;
+}
+
+.home-cliente-razones-grid {
+  width: 100%;
+  grid-template-columns: repeat(var(--cliente-razones-count, 1), minmax(0, 1fr));
+}
+
+.home-cliente-razon-card {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 0.7rem;
+  min-height: 7.25rem;
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.home-cliente-razon-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+
+.home-cliente-razon-value {
+  color: #ffffff;
+  font-size: clamp(1rem, 1.55vw, 1.25rem);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.home-cliente-servicio-label {
+  color: rgba(255, 207, 86, 0.95);
+  text-align: center;
+}
+
+.home-cliente-card {
+  min-height: 16rem;
+}
+
+.home-cliente-card-body {
+  min-height: 10rem;
+}
+
+.home-cliente-total-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  text-align: center;
+}
+
+.home-cliente-total-label {
+  color: var(--brand-support);
+}
+
+.home-cliente-total-value {
+  text-align: center;
+}
+
+.home-cliente-dashboard-card {
+  min-height: 16rem;
+}
+
+.home-cliente-dashboard-body {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  align-items: stretch;
+}
+
+.home-cliente-dashboard-body .home-shortcut-label {
+  align-self: start;
+  justify-self: center;
+}
+
+.home-cliente-dashboard-image {
+  align-self: center;
+  justify-self: center;
+  width: min(100%, 8.75rem);
+}
+
+.home-cliente-dashboard-row2 {
+  grid-column: 1;
+}
+
+.home-cliente-documentacion-row2 {
+  grid-column: 2;
+}
+
+@media (max-width: 700px) {
+  .home-cliente-grid,
+  .home-cliente-razones-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .home-cliente-dashboard-row2,
+  .home-cliente-documentacion-row2 {
+    grid-column: auto;
+  }
+}

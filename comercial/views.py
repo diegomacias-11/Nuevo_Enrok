@@ -1,57 +1,22 @@
 from datetime import datetime, time
 
-from django import forms
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
 
 from core.choices import ESTATUS_SEGUIMIENTO_CHOICES
+from core.access import (
+    access_context,
+    disable_form_fields,
+    get_model_access,
+    require_form_access,
+    require_model_permission,
+)
+from core.scope import require_cita_change_scope, require_cita_delete_scope, scoped_cita_access
 
+from .forms import CitaForm
 from .models import Cita, NUM_CITA_CHOICES
-
-
-class CitaForm(forms.ModelForm):
-    fecha_cita = forms.DateTimeField(
-        widget=forms.DateTimeInput(attrs={"type": "datetime-local"}, format="%Y-%m-%dT%H:%M"),
-        input_formats=["%Y-%m-%dT%H:%M"],
-        required=True,
-        label="Fecha de la cita",
-    )
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Al editar, mostrar fecha en formato compatible con datetime-local
-        if getattr(self, "instance", None) and getattr(self.instance, "pk", None) and self.instance.fecha_cita:
-            local_dt = timezone.localtime(self.instance.fecha_cita)
-            self.initial["fecha_cita"] = local_dt.strftime("%Y-%m-%dT%H:%M")
-        # Pasar fecha_registro para display
-        if getattr(self, "instance", None) and getattr(self.instance, "pk", None) and self.instance.fecha_registro:
-            self.fecha_registro_display = timezone.localtime(self.instance.fecha_registro)
-
-    class Meta:
-        model = Cita
-        fields = [
-            "prospecto",
-            "giro",
-            "tipo",
-            "servicio",
-            "servicio2",
-            "servicio3",
-            "contacto",
-            "telefono",
-            "correo",
-            "conexion",
-            "medio",
-            "estatus_cita",
-            "posibilidad",
-            "fecha_cita",
-            "numero_cita",
-            "lugar",
-            "estatus_seguimiento",
-            "comentarios",
-            "vendedor",
-        ]
 
 
 NUMERO_CITA_ORDER = [choice for choice, _ in NUM_CITA_CHOICES]
@@ -88,11 +53,14 @@ def _initial_desde_cita(cita: Cita) -> dict:
         "lugar": cita.lugar,
         "estatus_seguimiento": cita.estatus_seguimiento,
         "comentarios": cita.comentarios,
-        "vendedor": cita.vendedor,
+        "vendedor_usuario": cita.vendedor_usuario,
     }
 
 
 def citas_lista(request: HttpRequest) -> HttpResponse:
+    access = get_model_access(request.user, Cita)
+    require_model_permission(request.user, Cita, "view")
+
     citas = Cita.objects.all().order_by("-fecha_registro")
     prospecto = (request.GET.get("prospecto") or "").strip()
     fecha_desde = request.GET.get("fecha_desde") or ""
@@ -127,10 +95,14 @@ def citas_lista(request: HttpRequest) -> HttpResponse:
         "estatus_seguimiento": estatus_seguimiento,
         "estatus_seguimiento_choices": ESTATUS_SEGUIMIENTO_CHOICES,
     }
+    context.update(access_context(access))
     return render(request, "comercial/lista.html", context)
 
 
 def agregar_cita(request: HttpRequest) -> HttpResponse:
+    access = get_model_access(request.user, Cita)
+    require_model_permission(request.user, Cita, "add")
+
     back_url = request.GET.get("next") or reverse("citas_lista")
     copy_from = request.GET.get("copy_from")
     initial_data = {}
@@ -147,13 +119,18 @@ def agregar_cita(request: HttpRequest) -> HttpResponse:
         form = CitaForm(initial=initial_data)
 
     context = {"form": form, "back_url": back_url}
+    context.update(access_context(access))
     return render(request, "comercial/form.html", context)
 
 
 def editar_cita(request: HttpRequest, id: int) -> HttpResponse:
+    access = require_form_access(request.user, Cita)
     back_url = request.GET.get("next") or reverse("citas_lista")
     cita = get_object_or_404(Cita, pk=id)
+    access = scoped_cita_access(request.user, cita, access)
     if request.method == "POST":
+        require_model_permission(request.user, Cita, "change")
+        require_cita_change_scope(request.user, cita, access)
         back_url = request.POST.get("next") or back_url
         form = CitaForm(request.POST, instance=cita)
         if form.is_valid():
@@ -161,13 +138,19 @@ def editar_cita(request: HttpRequest, id: int) -> HttpResponse:
             return redirect(request.POST.get("next") or back_url)
     else:
         form = CitaForm(instance=cita)
+        if not access.can_change:
+            disable_form_fields(form)
 
     context = {"form": form, "back_url": back_url}
+    context.update(access_context(access))
     return render(request, "comercial/form.html", context)
 
 
 def eliminar_cita(request: HttpRequest, id: int) -> HttpResponse:
+    require_model_permission(request.user, Cita, "delete")
     back_url = request.POST.get("next") or request.GET.get("next") or reverse("citas_lista")
     cita = get_object_or_404(Cita, pk=id)
+    access = get_model_access(request.user, Cita)
+    require_cita_delete_scope(request.user, cita, access)
     cita.delete()
     return redirect(back_url)

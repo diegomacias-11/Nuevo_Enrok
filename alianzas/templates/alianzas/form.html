@@ -2,10 +2,12 @@
 
 {% block title %}{% if alianza %}Editar Alianza{% else %}Nueva Alianza{% endif %}{% endblock %}
 
+{% block page_title %}{% if alianza %}Editar Alianza{% else %}Nueva Alianza{% endif %}{% endblock %}
+
+{% block summary_bar %}{% endblock %}
+
 {% block back_link %}
-  <section class="filter-container">
-    <a href="{{ back_url }}" class="btn-filter">Volver</a>
-  </section>
+  <a href="{{ back_url }}" class="btn-filter">Volver</a>
 {% endblock %}
 
 {% block form_fields %}

@@ -1,34 +1,25 @@
 {% extends "form.html" %}
 
-{% block extra_head %}
-  <style>
-    .form-top-actions {
-      width: 100%;
-      display: flex;
-      justify-content: flex-end;
-      margin-bottom: .5rem;
-    }
-  </style>
-{% endblock %}
-
 {% block title %}Nueva Cita{% endblock %}
 
+{% block page_title %}{% if form.instance.pk %}Editar Cita{% else %}Nueva Cita{% endif %}{% endblock %}
+
+{% block summary_bar %}{% endblock %}
+
 {% block back_link %}
-  <div class="filter-container">
-    <a href="{{ back_url }}" class="btn-filter btn-volver">Volver</a>
-  </div>
+  <a href="{{ back_url }}" class="btn-filter btn-volver">Volver</a>
+{% endblock %}
+
+{% block page_actions %}
+  {% if form.instance.pk %}
+    <a class="btn-primary"
+       href="{% url 'agregar_cita' %}?copy_from={{ form.instance.pk }}&next={{ back_url|urlencode }}">
+      Registrar siguiente cita
+    </a>
+  {% endif %}
 {% endblock %}
 
 {% block form_fields %}
-  {% if form.instance.pk %}
-    <div class="form-top-actions">
-      <a class="btn-primary"
-         href="{% url 'agregar_cita' %}?copy_from={{ form.instance.pk }}&next={{ back_url|urlencode }}">
-        Registrar siguiente cita
-      </a>
-    </div>
-  {% endif %}
-
   {% if form.instance.pk %}
     <div class="form-meta">
       <strong>Fecha de registro:</strong>
@@ -120,9 +111,9 @@
       {{ form.comentarios }}
       {% if form.comentarios.errors %}<div class="error">{{ form.comentarios.errors }}</div>{% endif %}
 
-      <label for="{{ form.vendedor.id_for_label }}">{{ form.vendedor.label }}</label>
-      {{ form.vendedor }}
-      {% if form.vendedor.errors %}<div class="error">{{ form.vendedor.errors }}</div>{% endif %}
+      <label for="{{ form.vendedor_usuario.id_for_label }}">{{ form.vendedor_usuario.label }}</label>
+      {{ form.vendedor_usuario }}
+      {% if form.vendedor_usuario.errors %}<div class="error">{{ form.vendedor_usuario.errors }}</div>{% endif %}
     </div>
   </div>
 

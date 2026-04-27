@@ -1,0 +1,108 @@
+.table-container,
+.form-container,
+.duplicate-alert,
+.messages {
+  border-radius: 16px;
+  border: 1px solid var(--surface-line);
+  box-shadow: var(--page-shadow);
+}
+
+.table-container,
+.form-container {
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(6px);
+}
+
+.kanban-wrapper {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.form-container {
+  padding: 1.15rem 1rem;
+}
+
+.table-container {
+  overflow: auto;
+}
+
+.duplicate-alert,
+.messages {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, #eef4fb 100%);
+}
+
+.messages {
+  width: min(100%, 980px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+  list-style: none;
+  margin: 0 auto var(--page-section-gap);
+  padding: 0.9rem 1rem;
+  text-align: center;
+}
+
+.messages li {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  padding: 0.7rem 1rem;
+  border-radius: 14px;
+  border: 1px solid rgba(89, 137, 180, 0.2);
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: center;
+  box-shadow: 0 6px 14px rgba(0, 59, 113, 0.08);
+}
+
+.messages li.success {
+  background: linear-gradient(180deg, #ecfff3 0%, #d8f7e5 100%);
+  border-color: rgba(50, 138, 92, 0.35);
+  color: #12643f;
+}
+
+.messages li.error {
+  background: linear-gradient(180deg, #fff1f1 0%, #ffdede 100%);
+  border-color: rgba(180, 72, 72, 0.35);
+  color: #9f1f1f;
+}
+
+.messages li.warning {
+  background: linear-gradient(180deg, #fff8df 0%, #ffe9ac 100%);
+  border-color: rgba(255, 207, 86, 0.52);
+  color: #8a5a00;
+}
+
+.messages li.info,
+.messages li.debug,
+.messages li {
+  color: var(--brand-primary);
+}
+
+.messages li.info,
+.messages li.debug {
+  background: linear-gradient(180deg, #eef6ff 0%, #d9ebff 100%);
+  border-color: rgba(54, 94, 146, 0.28);
+}
+
+.duplicate-alert {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  padding: 0.45rem 0.8rem;
+  margin: 0.35rem auto 0.6rem;
+  background: #f9d7d7;
+  border: 1px solid #d79aa2;
+  color: #8b0000;
+  font-weight: 700;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}

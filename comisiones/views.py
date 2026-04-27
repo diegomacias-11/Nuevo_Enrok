@@ -11,6 +11,13 @@ from dispersiones.models import Dispersion
 from clientes.models import Cliente
 from .models import Comision, PagoComision
 from .forms import PagoComisionForm
+from core.access import (
+    access_context,
+    disable_form_fields,
+    get_model_access,
+    require_form_access,
+    require_model_permission,
+)
 from core.graph_email import send_graph_mail, GraphEmailError
 
 MESES_NOMBRES = [
@@ -46,6 +53,9 @@ def _first_day_next_month(y, m):
 
 
 def comisiones_lista(request):
+    access = get_model_access(request.user, Comision)
+    require_model_permission(request.user, Comision, "view")
+
     mes, anio, redir = _coerce_mes_anio(request)
     if redir:
         return redir
@@ -102,18 +112,26 @@ def comisiones_lista(request):
         'total_pagos': total_pagos,
         'total_pendiente': total_pendiente,
     }
+    context.update(access_context(access))
     return render(request, 'comisiones/lista.html', context)
 
 
 def comisiones_detalle(request, comisionista_id):
+    access = get_model_access(request.user, Comision)
+    require_model_permission(request.user, Comision, "view")
+
     mes, anio, redir = _coerce_mes_anio(request)
     if redir:
         return redir
     context = _detalle_context(comisionista_id, mes, anio)
+    context.update(access_context(access))
     return render(request, 'comisiones/detalle.html', context)
 
 
 def registrar_pago(request, comisionista_id: int = None):
+    access = get_model_access(request.user, PagoComision)
+    require_model_permission(request.user, PagoComision, "add")
+
     mes, anio, redir = _coerce_mes_anio(request)
     if redir and request.method != 'POST':
         return redir
@@ -133,7 +151,7 @@ def registrar_pago(request, comisionista_id: int = None):
         form = PagoComisionForm(request.POST, comisiones_qs=comisiones_qs, multi_mode=True)
         seleccion = request.POST.getlist("comisiones")
         if not seleccion:
-            messages.error(request, "Selecciona al menos una comisiÃ³n.")
+            messages.error(request, "Selecciona al menos una comisión.")
         elif form.is_valid():
             comisiones_sel = list(comisiones_qs.filter(id__in=seleccion))
             if len(comisiones_sel) != len(set(seleccion)):
@@ -158,7 +176,7 @@ def registrar_pago(request, comisionista_id: int = None):
                 return redirect(reverse('comisiones_lista') + f"?mes={mes}&anio={anio}")
     else:
         form = PagoComisionForm(comisiones_qs=comisiones_qs, multi_mode=True)
-    return render(request, 'comisiones/pago_form.html', {
+    context = {
         'form': form,
         'back_url': back_url,
         'mes': mes,
@@ -166,15 +184,19 @@ def registrar_pago(request, comisionista_id: int = None):
         'comisionista': comisionista_fixed.comisionista if comisionista_fixed else None,
         'mes_nombre': MESES_NOMBRES[mes],
         'comisiones_pendientes': comisiones_qs.select_related('cliente', 'comisionista'),
-    })
+    }
+    context.update(access_context(access))
+    return render(request, 'comisiones/pago_form.html', context)
 
 
 def editar_pago(request, id: int):
+    access = require_form_access(request.user, PagoComision)
     pago = get_object_or_404(PagoComision, pk=id)
     mes, anio, _ = _coerce_mes_anio(request)
     back_url = f"{reverse('comisiones_detalle', args=[pago.comisionista_id])}?mes={mes}&anio={anio}"
     comisiones_qs = Comision.objects.filter(pk=pago.comision_id)
     if request.method == 'POST':
+        require_model_permission(request.user, PagoComision, "change")
         form = PagoComisionForm(request.POST, instance=pago, comisiones_qs=comisiones_qs)
         if form.is_valid():
             obj = form.save(commit=False)
@@ -187,17 +209,23 @@ def editar_pago(request, id: int):
             return redirect(request.POST.get('next') or back_url)
     else:
         form = PagoComisionForm(instance=pago, comisiones_qs=comisiones_qs)
-    return render(request, 'comisiones/pago_form.html', {
+        if access.read_only:
+            disable_form_fields(form)
+    context = {
         'form': form,
         'back_url': back_url,
         'mes': mes,
         'anio': anio,
         'pago': pago,
         'comisionista': pago.comisionista,
-    })
+        'mes_nombre': MESES_NOMBRES[mes],
+    }
+    context.update(access_context(access))
+    return render(request, 'comisiones/pago_form.html', context)
 
 
 def eliminar_pago(request, id: int):
+    require_model_permission(request.user, PagoComision, "delete")
     pago = get_object_or_404(PagoComision, pk=id)
     mes, anio, _ = _coerce_mes_anio(request)
     back_url = request.POST.get('next') or f"{reverse('comisiones_detalle', args=[pago.comisionista_id])}?mes={mes}&anio={anio}"
@@ -232,6 +260,8 @@ def _detalle_context(comisionista_id, mes, anio):
 
 
 def enviar_detalle_comisionista(request, comisionista_id):
+    require_model_permission(request.user, Comision, "view")
+
     mes, anio, redir = _coerce_mes_anio(request)
     if redir:
         return redir

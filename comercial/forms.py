@@ -5,6 +5,11 @@ from django.utils import timezone
 from .models import Cita
 
 
+class VendedorUsuarioChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+        return obj.get_full_name() or obj.username
+
+
 class CitaForm(forms.ModelForm):
     fecha_cita = forms.DateTimeField(
         widget=forms.DateTimeInput(attrs={"type": "datetime-local"}, format="%Y-%m-%dT%H:%M"),
@@ -38,6 +43,9 @@ class CitaForm(forms.ModelForm):
         ]
         labels = {
             "vendedor_usuario": "Vendedor",
+        }
+        field_classes = {
+            "vendedor_usuario": VendedorUsuarioChoiceField,
         }
 
     def __init__(self, *args, **kwargs):

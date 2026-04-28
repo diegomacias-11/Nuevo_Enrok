@@ -28,6 +28,15 @@
     </div>
     <span class="filter-separator" aria-hidden="true"></span>
     <div class="filter-block">
+      <label for="alianza">Alianza</label>
+      <select id="alianza" name="alianza">
+        <option value="">Todos</option>
+        <option value="True" {% if alianza == "True" %}selected{% endif %}>Sí</option>
+        <option value="False" {% if alianza == "False" %}selected{% endif %}>No</option>
+      </select>
+    </div>
+    <span class="filter-separator" aria-hidden="true"></span>
+    <div class="filter-block">
       <label for="estatus_seguimiento">Estatus seguimiento</label>
       <select id="estatus_seguimiento" name="estatus_seguimiento">
         <option value="">Todos</option>
@@ -56,6 +65,7 @@
   <tr>
     <th class="sticky-1 col-actions">Acciones</th>
     <th>Prospecto</th>
+    <th>Alianza</th>
     <th>Medio</th>
     <th>Servicio</th>
     <th>Vendedor</th>
@@ -75,6 +85,7 @@
         <a href="{% url 'editar_cita' c.id %}?next={{ request.get_full_path|urlencode }}" class="btn-detalle">Detalle</a>
       </td>
       <td>{{ c.prospecto|default_if_none:"" }}</td>
+      <td>{{ c.alianza|yesno:"Sí,No" }}</td>
       <td>{{ c.medio|default_if_none:"" }}</td>
       <td>{{ c.servicio|default_if_none:"" }}</td>
       <td>{{ c.vendedor_display }}</td>

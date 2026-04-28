@@ -218,42 +218,6 @@
   background: #ffffff;
 }
 
-.page-filter-bar .filter-multiselect-option input[type="checkbox"] {
-  flex: 0 0 auto;
-  appearance: none;
-  -webkit-appearance: none;
-  width: 0.95rem;
-  height: 0.95rem;
-  margin: 0;
-  border: 2px solid var(--brand-accent);
-  border-radius: 4px;
-  background: #ffffff;
-  position: relative;
-  display: inline-block;
-}
-
-.page-filter-bar .filter-multiselect-option input[type="checkbox"]::after {
-  content: "";
-  position: absolute;
-  top: 47%;
-  left: 50%;
-  width: 0.24rem;
-  height: 0.48rem;
-  border-right: 2px solid var(--brand-primary);
-  border-bottom: 2px solid var(--brand-primary);
-  transform: translate(-50%, -54%) rotate(45deg) scale(0);
-  transform-origin: center;
-  transition: transform 0.08s ease-in-out;
-}
-
-.page-filter-bar .filter-multiselect-option input[type="checkbox"]:checked {
-  background: var(--brand-accent);
-}
-
-.page-filter-bar .filter-multiselect-option input[type="checkbox"]:checked::after {
-  transform: translate(-50%, -54%) rotate(45deg) scale(1);
-}
-
 .page-filter-bar .filter-multiselect-option span {
   flex: 1 1 auto;
   min-width: 0;

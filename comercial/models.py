@@ -17,6 +17,7 @@ from core.choices import (
 
 class Cita(models.Model):
     prospecto = models.CharField(max_length=150)
+    alianza = models.BooleanField(default=False)
     giro = models.CharField(max_length=150, blank=True, null=True)
     tipo = models.CharField(max_length=50, choices=TIPO_CHOICES, blank=True, null=True)
     medio = models.CharField(max_length=100, choices=MEDIO_CHOICES)

@@ -67,11 +67,14 @@ def citas_lista(request: HttpRequest) -> HttpResponse:
     fecha_hasta = request.GET.get("fecha_hasta") or ""
     estatus_seguimiento = request.GET.get("estatus_seguimiento") or ""
     vendedor = request.GET.get("vendedor") or ""
+    alianza = request.GET.get("alianza") or ""
 
     if prospecto:
         citas = citas.filter(prospecto__icontains=prospecto)
     if vendedor:
         citas = citas.filter(vendedor_usuario_id=vendedor)
+    if alianza:
+        citas = citas.filter(alianza=alianza)
 
     tz = timezone.get_current_timezone()
     if fecha_desde:
@@ -98,6 +101,7 @@ def citas_lista(request: HttpRequest) -> HttpResponse:
         "estatus_seguimiento": estatus_seguimiento,
         "estatus_seguimiento_choices": ESTATUS_SEGUIMIENTO_CHOICES,
         "vendedor": vendedor,
+        "alianza": alianza,
     }
     context.update(access_context(access))
     return render(request, "comercial/lista.html", context)

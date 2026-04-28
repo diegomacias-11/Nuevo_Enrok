@@ -37,6 +37,7 @@
       {{ form.prospecto }}
       {% if form.prospecto.errors %}<div class="error">{{ form.prospecto.errors }}</div>{% endif %}
 
+
       <label for="{{ form.giro.id_for_label }}">{{ form.giro.label }}</label>
       {{ form.giro }}
       {% if form.giro.errors %}<div class="error">{{ form.giro.errors }}</div>{% endif %}
@@ -58,7 +59,16 @@
       {% if form.servicio3.errors %}<div class="error">{{ form.servicio3.errors }}</div>{% endif %}
     </div>
 
+
     <div class="form-col">
+      <!-- Switch visual para Alianza justo arriba de Contacto -->
+      <label for="{{ form.alianza.id_for_label }}" class="switch-label">{{ form.alianza.label }}</label>
+      <label class="toggle-switch">
+        {{ form.alianza }}
+        <span></span>
+      </label>
+      {% if form.alianza.errors %}<div class="error">{{ form.alianza.errors }}</div>{% endif %}
+
       <label for="{{ form.contacto.id_for_label }}">{{ form.contacto.label }}</label>
       {{ form.contacto }}
       {% if form.contacto.errors %}<div class="error">{{ form.contacto.errors }}</div>{% endif %}

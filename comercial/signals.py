@@ -7,15 +7,31 @@ from .models import Cita
 @receiver(post_save, sender=Cita)
 def crear_cliente_al_cerrar(sender, instance: Cita, created: bool, **kwargs):
     """
-    Cuando una Cita queda en estatus_seguimiento 'Activo',
-    crea/actualiza un Cliente con razon_social (prospecto) y servicio.
+    Cuando una Cita queda en estatus_seguimiento 'Activo':
+    - Si alianza es True, crea/actualiza una Alianza con nombre=prospecto y correo_electronico=correo.
+    - Si alianza es False, crea/actualiza un Cliente con razon_social=prospecto y servicio.
     """
+    if instance.estatus_seguimiento != "Activo":
+        return
+
+    if instance.alianza:
+        try:
+            from alianzas.models import Alianza
+        except Exception:
+            return
+        alianza_data = {"nombre": instance.prospecto}
+        if instance.correo:
+            alianza_data["correo_electronico"] = instance.correo
+        Alianza.objects.update_or_create(
+            nombre=instance.prospecto,
+            defaults=alianza_data,
+        )
+        return
+
+    # Solo si alianza es False
     try:
         from clientes.models import Cliente
     except Exception:
-        return
-
-    if instance.estatus_seguimiento != "Activo":
         return
 
     servicio_value = None

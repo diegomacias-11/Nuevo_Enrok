@@ -24,6 +24,7 @@ class CitaForm(forms.ModelForm):
         model = Cita
         fields = [
             "prospecto",
+            "alianza",
             "giro",
             "tipo",
             "servicio",
@@ -48,11 +49,11 @@ class CitaForm(forms.ModelForm):
         }
         field_classes = {
             "vendedor_usuario": VendedorUsuarioChoiceField,
-    }
-
+        }
     def __init__(self, *args, **kwargs):
         request_user = kwargs.pop("request_user", None)
         super().__init__(*args, **kwargs)
+
 
         user_model = get_user_model()
         vendedores_qs = (

@@ -63,18 +63,21 @@
       ctx.font = "600 11px Arial";
 
       if (chart.config.type === "bar") {
+        const isGroupedPayment = chart.canvas && chart.canvas.id === "comisionesGeneradoPagado";
         chart.data.datasets.forEach((dataset, datasetIndex) => {
           const meta = chart.getDatasetMeta(datasetIndex);
           meta.data.forEach((bar, i) => {
             const value = Number((dataset.data || [])[i] || 0);
             if (!value) return;
             const pos = bar.tooltipPosition();
+            ctx.font = isGroupedPayment ? "600 9px Arial" : "600 11px Arial";
             if (chart.options.indexAxis === "y") {
               ctx.textAlign = "left";
               ctx.fillText(compactMoney(value), pos.x + 8, pos.y);
             } else {
               ctx.textAlign = "center";
-              ctx.fillText(compactMoney(value), pos.x, pos.y - 10);
+              const offsetY = isGroupedPayment ? (datasetIndex === 0 ? 14 : 7) : 10;
+              ctx.fillText(compactMoney(value), pos.x, pos.y - offsetY);
             }
           });
         });

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+  <section class="page-shell page-shell-dashboard">
+    <section class="page-title-bar">
+      <div class="page-title-copy">
+        <h1 class="page-title">{% block page_title %}Dashboard{% endblock %}</h1>
+        {% block page_title_meta %}{% endblock %}
+      </div>
+    </section>
+
+    {% block dashboard_nav %}{% endblock %}
+
+    {% block filter_bar %}
+      <section class="filter-container page-filter-bar">{% block filtros %}{% endblock %}</section>
+    {% endblock %}
+
+    {% block summary_bar %}
+      <section class="page-summary">{% block page_summary %}{% endblock %}</section>
+    {% endblock %}
+
+    {% block action_bar %}
+      <section class="page-action-bar">
+        <div class="page-action-bar-inner">
+          {% block page_title_actions %}{% endblock %}
+          {% block page_actions %}{% endblock %}
+        </div>
+      </section>
+    {% endblock %}
+
+    <div class="dashboard-container">
+      {% block dashboard_content %}{% endblock %}
+    </div>
+  </section>
+{% endblock %}

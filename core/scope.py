@@ -4,6 +4,11 @@ from django.core.exceptions import PermissionDenied
 
 
 VENTAS_GROUP = "Ventas"
+REPORTES_GROUPS = {
+    "Apoyo Comercial",
+    "Dirección Operaciones",
+    "Dirección Ventas",
+}
 
 
 def user_in_group(user, group_name):
@@ -12,6 +17,14 @@ def user_in_group(user, group_name):
 
 def is_ventas_user(user):
     return user_in_group(user, VENTAS_GROUP)
+
+
+def can_view_reportes(user):
+    if not user.is_authenticated:
+        return False
+    if user.is_superuser:
+        return True
+    return user.groups.filter(name__in=REPORTES_GROUPS).exists()
 
 
 def can_change_cita(user, cita, access):

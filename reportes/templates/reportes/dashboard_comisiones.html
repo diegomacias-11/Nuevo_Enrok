@@ -1,0 +1,124 @@
+{% extends "dashboard.html" %}
+{% load static cliente_extras %}
+
+{% block title %}Dashboard Comisiones{% endblock %}
+{% block page_title %}Dashboard | Comisiones{% endblock %}
+
+{% block page_title_meta %}
+  <div class="page-title-meta">{{ mes_nombre }} {{ anio }}</div>
+{% endblock %}
+
+{% block extra_head %}
+  {{ block.super }}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+{% endblock %}
+
+{% block filtros %}
+  <form action="{% url 'reportes_dashboard_comisiones' %}" method="get" class="filter-form-simple comisiones-filter">
+    <div class="filter-block">
+      <label for="mes">Mes</label>
+      <select id="mes" name="mes">
+        {% for m, nombre in meses_choices %}
+          <option value="{{ m }}" {% if mes == m|stringformat:'i' %}selected{% endif %}>{{ nombre }}</option>
+        {% endfor %}
+        <option value="todos" {% if mes == "todos" %}selected{% endif %}>Todos los meses</option>
+      </select>
+    </div>
+    <div class="filter-block">
+      <label for="anio">Año</label>
+      <input type="number" id="anio" name="anio" value="{{ anio }}" min="2000" max="2100">
+    </div>
+    <div class="filter-block">
+      <label for="cliente">Cliente</label>
+      <select id="cliente" name="cliente">
+        <option value="">Todos</option>
+        {% for c in clientes %}
+          <option value="{{ c.id }}" {% if cliente_id == c.id|stringformat:'s' %}selected{% endif %}>{{ c.razon_social }} - {{ c.get_servicio_display }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    {% for field, value in chart_filters.items %}
+      {% if value %}
+        <input type="hidden" name="{{ field }}" value="{{ value }}">
+      {% endif %}
+    {% endfor %}
+    <div class="filter-actions">
+      <button type="submit" class="btn-filter btn-filtrar">Filtrar</button>
+      <a href="{% url 'reportes_dashboard_comisiones' %}?mes={{ mes }}&anio={{ anio }}" class="btn-filter btn-limpiar">Limpiar</a>
+    </div>
+  </form>
+{% endblock %}
+
+{% block page_summary %}
+  <div class="metrics-row metrics-row-inline">
+    <div class="metric">
+      <span class="metric-label">Total periodo</span>
+      <span class="metric-value">{{ total_periodo|currency }}</span>
+    </div>
+    <div class="metric">
+      <span class="metric-label">Liberado</span>
+      <span class="metric-value">{{ total_liberado|currency }}</span>
+    </div>
+    <div class="metric">
+      <span class="metric-label">Pagos</span>
+      <span class="metric-value">{{ total_pagos|currency }}</span>
+    </div>
+    <div class="metric">
+      <span class="metric-label">Pendiente</span>
+      <span class="metric-value">{{ total_pendiente|currency }}</span>
+    </div>
+    {% for filter in active_chart_filters %}
+      <div class="metric">
+        <span class="metric-label">{{ filter.title }}</span>
+        <span class="metric-value">{{ filter.value }}</span>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}
+
+{% block page_actions %}
+  <a href="{% url 'reportes_home' %}" class="btn-filter btn-volver">Volver</a>
+{% endblock %}
+
+{% block dashboard_content %}
+  {% if not total_comisiones %}
+    <div class="dashboard-empty">Sin comisiones para los filtros seleccionados.</div>
+  {% else %}
+    <div class="dashboard-grid">
+      <article class="dashboard-card dashboard-card-full dashboard-card-tall">
+        <h2 class="dashboard-title">Comisión por cliente</h2>
+        <div class="dashboard-chart-wrap">
+          <canvas id="comisionesPorCliente" class="dashboard-canvas" aria-label="Comisión por cliente"></canvas>
+        </div>
+      </article>
+
+      <article class="dashboard-card dashboard-card-half">
+        <h2 class="dashboard-title">Liberado vs no liberado</h2>
+        <div class="dashboard-chart-wrap">
+          <canvas id="comisionesLiberadas" class="dashboard-canvas" aria-label="Liberado vs no liberado"></canvas>
+        </div>
+      </article>
+
+      <article class="dashboard-card dashboard-card-half">
+        <h2 class="dashboard-title">Pagado vs no pagado</h2>
+        <div class="dashboard-chart-wrap">
+          <canvas id="comisionesPagadas" class="dashboard-canvas" aria-label="Pagado vs no pagado"></canvas>
+        </div>
+      </article>
+
+      <article class="dashboard-card dashboard-card-full">
+        <h2 class="dashboard-title">Generado vs pagado</h2>
+        <div class="dashboard-chart-wrap">
+          <canvas id="comisionesGeneradoPagado" class="dashboard-canvas" aria-label="Generado vs pagado"></canvas>
+        </div>
+      </article>
+    </div>
+  {% endif %}
+
+  {{ chart_data|json_script:"comisiones-dashboard-data" }}
+{% endblock %}
+
+{% block extra_scripts %}
+  {{ block.super }}
+  <script src="{% static 'js/reportes/dashboard_comisiones.js' %}"></script>
+{% endblock %}

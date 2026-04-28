@@ -1,0 +1,45 @@
+{% extends "dashboard.html" %}
+{% load static %}
+
+{% block title %}Reportes{% endblock %}
+{% block page_title %}Reportes{% endblock %}
+
+{% block dashboard_nav %}
+  <nav class="dashboard-nav dashboard-nav-portal" aria-label="Dashboards">
+    <a href="{% url 'reportes_dashboard_citas' %}" class="dashboard-nav-card dashboard-nav-card-citas">
+      <span class="dashboard-nav-icon" aria-hidden="true">
+        <img src="{% static 'img/logo_blanco.png' %}" alt="" class="dashboard-nav-icon-img">
+      </span>
+      <span class="dashboard-nav-copy">
+        <span class="dashboard-nav-title">Citas</span>
+        <span class="dashboard-nav-meta">Seguimiento comercial de citas.</span>
+      </span>
+      <span class="dashboard-nav-arrow" aria-hidden="true">›</span>
+    </a>
+    <a href="{% url 'reportes_dashboard_dispersiones' %}" class="dashboard-nav-card dashboard-nav-card-dispersiones">
+      <span class="dashboard-nav-icon" aria-hidden="true">
+        <img src="{% static 'img/logo_blanco.png' %}" alt="" class="dashboard-nav-icon-img">
+      </span>
+      <span class="dashboard-nav-copy">
+        <span class="dashboard-nav-title">Dispersiones</span>
+        <span class="dashboard-nav-meta">Resumen de la operación de dispersiones.</span>
+      </span>
+      <span class="dashboard-nav-arrow" aria-hidden="true">›</span>
+    </a>
+    <a href="{% url 'reportes_dashboard_comisiones' %}" class="dashboard-nav-card dashboard-nav-card-comisiones">
+      <span class="dashboard-nav-icon" aria-hidden="true">
+        <img src="{% static 'img/logo_blanco.png' %}" alt="" class="dashboard-nav-icon-img">
+      </span>
+      <span class="dashboard-nav-copy">
+        <span class="dashboard-nav-title">Comisiones</span>
+        <span class="dashboard-nav-meta">Resumen de las comisiones liberadas, pagadas y pendientes.</span>
+      </span>
+      <span class="dashboard-nav-arrow" aria-hidden="true">›</span>
+    </a>
+  </nav>
+{% endblock %}
+
+{% block filter_bar %}{% endblock %}
+{% block summary_bar %}{% endblock %}
+{% block action_bar %}{% endblock %}
+{% block dashboard_content %}{% endblock %}

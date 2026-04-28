@@ -5,17 +5,19 @@
   </div>
   <nav class="main-nav">
     <a href="{% url 'citas_lista' %}"
-       class="{% if 'citas' in request.path %}active{% endif %}"><span class="nav-title">Citas</span></a>
+       class="{% if request.path == '/citas/' %}active{% endif %}"><span class="nav-title">Citas</span></a>
     <a href="{% url 'alianzas_lista' %}"
-       class="{% if 'alianzas' in request.path %}active{% endif %}"><span class="nav-title">Alianzas</span></a>
+       class="{% if request.path|slice:':10' == '/alianzas/' %}active{% endif %}"><span class="nav-title">Alianzas</span></a>
     <a href="{% url 'clientes_lista' %}"
-       class="{% if 'clientes' in request.path %}active{% endif %}"><span class="nav-title">Clientes</span></a>
+       class="{% if request.path|slice:':10' == '/clientes/' %}active{% endif %}"><span class="nav-title">Clientes</span></a>
     <a href="{% url 'dispersiones_lista' %}"
-       class="{% if 'dispersiones' in request.path %}active{% endif %}"><span class="nav-title">Dispersiones</span></a>
+       class="{% if request.path|slice:':14' == '/dispersiones/' %}active{% endif %}"><span class="nav-title">Dispersiones</span></a>
     <a href="{% url 'comisiones_lista' %}"
-       class="{% if 'comisiones' in request.path %}active{% endif %}"><span class="nav-title">Comisiones</span></a>
-    <a href="{% url 'reporte_looker' %}"
-       class="{% if 'reportes' in request.path %}active{% endif %}"><span class="nav-title">Reportes</span></a>
+       class="{% if request.path|slice:':12' == '/comisiones/' %}active{% endif %}"><span class="nav-title">Comisiones</span></a>
+    {% if can_view_reportes %}
+      <a href="/reportes/"
+         class="{% if request.path|slice:':10' == '/reportes/' %}active{% endif %}"><span class="nav-title">Reportes</span></a>
+    {% endif %}
   </nav>
   <div class="user-card">
     <div class="user-meta">
@@ -28,8 +30,8 @@
         {% endwith %}
       </div>
     </div>
-    <a href="{% url 'logout' %}" class="user-logout" title="Cerrar sesi&oacute;n">
-      <img src="{% static 'img/logout.png' %}" alt="Cerrar sesi&oacute;n" class="logout-icon" />
+    <a href="{% url 'logout' %}" class="user-logout" title="Cerrar sesión">
+      <img src="{% static 'img/logout.png' %}" alt="Cerrar sesión" class="logout-icon" />
     </a>
   </div>
 </header>

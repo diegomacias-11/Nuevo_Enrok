@@ -9,5 +9,6 @@
 @import url("./modules/metrics-system.css");
 @import url("./modules/kanban-system.css");
 @import url("./modules/dashboard-system.css");
+@import url("./modules/dashboard-nav.css");
 @import url("./modules/button-system.css");
 @import url("./pages/auth.css");

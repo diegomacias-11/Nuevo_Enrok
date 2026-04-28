@@ -10,9 +10,10 @@
 
 .dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-auto-flow: dense;
   gap: 1rem;
-  align-items: start;
+  align-items: stretch;
 }
 
 .dashboard-card {
@@ -24,9 +25,32 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.72),
     0 8px 18px rgba(0, 59, 113, 0.08);
   min-height: 360px;
+  height: 100%;
+  grid-column: span 4;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+
+.dashboard-card-wide {
+  grid-column: span 8;
+}
+
+.dashboard-card-half {
+  grid-column: span 6;
+}
+
+.dashboard-card-full {
+  grid-column: span 12;
+}
+
+.dashboard-card-compact {
+  grid-column: span 4;
+  min-height: 315px;
+}
+
+.dashboard-card-tall {
+  min-height: 460px;
 }
 
 .dashboard-title {
@@ -46,6 +70,16 @@
   min-height: 330px;
   height: 330px;
   flex: 1 1 auto;
+}
+
+.dashboard-card-compact .dashboard-chart-wrap {
+  min-height: 285px;
+  height: 285px;
+}
+
+.dashboard-card-tall .dashboard-chart-wrap {
+  min-height: 430px;
+  height: 430px;
 }
 
 .dashboard-canvas {
@@ -75,6 +109,14 @@
 @media (max-width: 900px) {
   .dashboard-grid {
     grid-template-columns: 1fr;
+  }
+
+  .dashboard-card,
+  .dashboard-card-half,
+  .dashboard-card-wide,
+  .dashboard-card-full,
+  .dashboard-card-compact {
+    grid-column: 1 / -1;
   }
 
   .dashboard-card {

@@ -21,6 +21,9 @@ BUSINESS_APP_LABELS = [
 VENTAS_GROUP = "Ventas"
 VENTAS_MODEL = "comercial.Cita"
 VENTAS_ACTIONS = ["view", "add", "change", "delete"]
+VENTAS_VIEW_ONLY_MODELS = [
+    "alianzas.Alianza",
+]
 
 
 class Command(BaseCommand):
@@ -28,7 +31,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         business_permissions = self._business_permissions()
-        ventas_permissions = self._model_permissions(VENTAS_MODEL, VENTAS_ACTIONS)
+        ventas_permissions = list(self._model_permissions(VENTAS_MODEL, VENTAS_ACTIONS))
+        for model_label in VENTAS_VIEW_ONLY_MODELS:
+            ventas_permissions.extend(self._model_permissions(model_label, ["view"]))
 
         for group_name in FULL_ACCESS_GROUPS:
             self._add_permissions(group_name, business_permissions)

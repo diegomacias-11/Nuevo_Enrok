@@ -1,0 +1,104 @@
+{% extends "dashboard.html" %}
+{% load static cliente_extras %}
+
+{% block title %}Dashboard Dispersiones{% endblock %}
+{% block page_title %}Dashboard | Dispersiones{% endblock %}
+
+{% block page_title_meta %}
+  <div class="page-title-meta">{{ mes_nombre }} {{ anio }}</div>
+{% endblock %}
+
+{% block extra_head %}
+  {{ block.super }}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+{% endblock %}
+
+{% block filtros %}
+  <form action="{% url 'reportes_dashboard_dispersiones' %}" method="get" class="filter-form-simple dispersiones-filter">
+    <div class="filter-block">
+      <label for="mes">Mes</label>
+      <select id="mes" name="mes">
+        {% for m, nombre in meses_choices %}
+          <option value="{{ m }}" {% if mes == m|stringformat:'i' %}selected{% endif %}>{{ nombre }}</option>
+        {% endfor %}
+        <option value="todos" {% if mes == "todos" %}selected{% endif %}>Todos los meses</option>
+      </select>
+    </div>
+    <div class="filter-block">
+      <label for="anio">Año</label>
+      <input type="number" id="anio" name="anio" value="{{ anio }}" min="2000" max="2100">
+    </div>
+    {% for field, value in chart_filters.items %}
+      {% if value %}
+        <input type="hidden" name="{{ field }}" value="{{ value }}">
+      {% endif %}
+    {% endfor %}
+    <div class="filter-actions">
+      <button type="submit" class="btn-filter btn-filtrar">Filtrar</button>
+      <a href="{% url 'reportes_dashboard_dispersiones' %}" class="btn-filter btn-limpiar">Limpiar</a>
+    </div>
+  </form>
+{% endblock %}
+
+{% block page_summary %}
+  <div class="metrics-row metrics-row-inline">
+    <div class="metric">
+      <span class="metric-label">Dispersiones</span>
+      <span class="metric-value">{{ total_dispersiones }}</span>
+    </div>
+    <div class="metric">
+      <span class="metric-label">Monto dispersión</span>
+      <span class="metric-value">{{ total_monto_dispersion|currency }}</span>
+    </div>
+    <div class="metric">
+      <span class="metric-label">Comisión</span>
+      <span class="metric-value">{{ total_monto_comision|currency }}</span>
+    </div>
+    {% for filter in active_chart_filters %}
+      <div class="metric">
+        <span class="metric-label">{{ filter.title }}</span>
+        <span class="metric-value">{{ filter.value }}</span>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}
+
+{% block page_actions %}
+  <a href="{% url 'reportes_home' %}" class="btn-filter btn-volver">Volver</a>
+{% endblock %}
+
+{% block dashboard_content %}
+  {% if not total_dispersiones %}
+    <div class="dashboard-empty">Sin dispersiones para los filtros seleccionados.</div>
+  {% else %}
+    <div class="dashboard-grid">
+      <article class="dashboard-card dashboard-card-full dashboard-card-tall">
+        <h2 class="dashboard-title">Monto por cliente</h2>
+        <div class="dashboard-chart-wrap">
+          <canvas id="dispersionesPorCliente" class="dashboard-canvas" aria-label="Monto por cliente"></canvas>
+        </div>
+      </article>
+
+      <article class="dashboard-card dashboard-card-half">
+        <h2 class="dashboard-title">Monto por servicio</h2>
+        <div class="dashboard-chart-wrap">
+          <canvas id="dispersionesPorServicio" class="dashboard-canvas" aria-label="Monto por servicio"></canvas>
+        </div>
+      </article>
+
+      <article class="dashboard-card dashboard-card-half">
+        <h2 class="dashboard-title">Estatus pago</h2>
+        <div class="dashboard-chart-wrap">
+          <canvas id="dispersionesPorPago" class="dashboard-canvas" aria-label="Estatus pago"></canvas>
+        </div>
+      </article>
+    </div>
+  {% endif %}
+
+  {{ chart_data|json_script:"dispersiones-dashboard-data" }}
+{% endblock %}
+
+{% block extra_scripts %}
+  {{ block.super }}
+  <script src="{% static 'js/reportes/dashboard_dispersiones.js' %}"></script>
+{% endblock %}

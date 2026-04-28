@@ -137,7 +137,7 @@
           (chartArea.bottom - chartArea.top) + (clipPad * 2)
         );
         ctx.clip();
-        ctx.strokeStyle = "#4e7fae";
+        ctx.strokeStyle = "#ffcf56";
         ctx.lineWidth = 1;
 
         const drawSide = (arr, side) => {

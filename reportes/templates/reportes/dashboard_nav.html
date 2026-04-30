@@ -6,36 +6,42 @@
 
 {% block dashboard_nav %}
   <nav class="dashboard-nav dashboard-nav-portal" aria-label="Dashboards">
-    <a href="{% url 'reportes_dashboard_citas' %}" class="dashboard-nav-card dashboard-nav-card-citas">
-      <span class="dashboard-nav-icon" aria-hidden="true">
-        <img src="{% static 'img/logo_blanco.png' %}" alt="" class="dashboard-nav-icon-img">
-      </span>
-      <span class="dashboard-nav-copy">
-        <span class="dashboard-nav-title">Citas</span>
-        <span class="dashboard-nav-meta">Seguimiento comercial de citas.</span>
-      </span>
-      <span class="dashboard-nav-arrow" aria-hidden="true">›</span>
-    </a>
-    <a href="{% url 'reportes_dashboard_dispersiones' %}" class="dashboard-nav-card dashboard-nav-card-dispersiones">
-      <span class="dashboard-nav-icon" aria-hidden="true">
-        <img src="{% static 'img/logo_blanco.png' %}" alt="" class="dashboard-nav-icon-img">
-      </span>
-      <span class="dashboard-nav-copy">
-        <span class="dashboard-nav-title">Dispersiones</span>
-        <span class="dashboard-nav-meta">Resumen de la operación de dispersiones.</span>
-      </span>
-      <span class="dashboard-nav-arrow" aria-hidden="true">›</span>
-    </a>
-    <a href="{% url 'reportes_dashboard_comisiones' %}" class="dashboard-nav-card dashboard-nav-card-comisiones">
-      <span class="dashboard-nav-icon" aria-hidden="true">
-        <img src="{% static 'img/logo_blanco.png' %}" alt="" class="dashboard-nav-icon-img">
-      </span>
-      <span class="dashboard-nav-copy">
-        <span class="dashboard-nav-title">Comisiones</span>
-        <span class="dashboard-nav-meta">Resumen de las comisiones liberadas, pagadas y pendientes.</span>
-      </span>
-      <span class="dashboard-nav-arrow" aria-hidden="true">›</span>
-    </a>
+    {% if "citas" in reportes_permitidos %}
+      <a href="{% url 'reportes_dashboard_citas' %}" class="dashboard-nav-card dashboard-nav-card-citas">
+        <span class="dashboard-nav-icon" aria-hidden="true">
+          <img src="{% static 'img/logo_blanco.png' %}" alt="" class="dashboard-nav-icon-img">
+        </span>
+        <span class="dashboard-nav-copy">
+          <span class="dashboard-nav-title">Citas</span>
+          <span class="dashboard-nav-meta">Seguimiento comercial de citas.</span>
+        </span>
+        <span class="dashboard-nav-arrow" aria-hidden="true">&rsaquo;</span>
+      </a>
+    {% endif %}
+    {% if "dispersiones" in reportes_permitidos %}
+      <a href="{% url 'reportes_dashboard_dispersiones' %}" class="dashboard-nav-card dashboard-nav-card-dispersiones">
+        <span class="dashboard-nav-icon" aria-hidden="true">
+          <img src="{% static 'img/logo_blanco.png' %}" alt="" class="dashboard-nav-icon-img">
+        </span>
+        <span class="dashboard-nav-copy">
+          <span class="dashboard-nav-title">Dispersiones</span>
+          <span class="dashboard-nav-meta">Resumen de la operacion de dispersiones.</span>
+        </span>
+        <span class="dashboard-nav-arrow" aria-hidden="true">&rsaquo;</span>
+      </a>
+    {% endif %}
+    {% if "comisiones" in reportes_permitidos %}
+      <a href="{% url 'reportes_dashboard_comisiones' %}" class="dashboard-nav-card dashboard-nav-card-comisiones">
+        <span class="dashboard-nav-icon" aria-hidden="true">
+          <img src="{% static 'img/logo_blanco.png' %}" alt="" class="dashboard-nav-icon-img">
+        </span>
+        <span class="dashboard-nav-copy">
+          <span class="dashboard-nav-title">Comisiones</span>
+          <span class="dashboard-nav-meta">Resumen de las comisiones liberadas, pagadas y pendientes.</span>
+        </span>
+        <span class="dashboard-nav-arrow" aria-hidden="true">&rsaquo;</span>
+      </a>
+    {% endif %}
   </nav>
 {% endblock %}
 

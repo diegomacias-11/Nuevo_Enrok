@@ -1,5 +1,6 @@
 from datetime import datetime, time
 
+from django.contrib.auth import get_user_model
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -20,6 +21,18 @@ from .models import Cita, NUM_CITA_CHOICES
 
 
 NUMERO_CITA_ORDER = [choice for choice, _ in NUM_CITA_CHOICES]
+
+
+def _vendedor_choices(request_user) -> list[tuple[str, str]]:
+    user_model = get_user_model()
+    vendedores = (
+        user_model.objects.filter(groups__name="Ventas", is_active=True)
+        .distinct()
+        .order_by("first_name", "last_name", "username")
+    )
+    if request_user and is_ventas_user(request_user):
+        vendedores = vendedores.filter(pk=request_user.pk)
+    return [(str(user.pk), user.get_full_name() or user.username) for user in vendedores]
 
 
 def _siguiente_numero_cita(actual: str | None) -> str | None:
@@ -101,6 +114,7 @@ def citas_lista(request: HttpRequest) -> HttpResponse:
         "estatus_seguimiento": estatus_seguimiento,
         "estatus_seguimiento_choices": ESTATUS_SEGUIMIENTO_CHOICES,
         "vendedor": vendedor,
+        "vendedor_choices": _vendedor_choices(request.user),
         "alianza": alianza,
     }
     context.update(access_context(access))

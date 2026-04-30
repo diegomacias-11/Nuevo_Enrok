@@ -3,11 +3,15 @@ from dataclasses import replace
 from django.core.exceptions import PermissionDenied
 
 
-VENTAS_GROUP = "Ventas"
-REPORTES_GROUPS = {
-    "Apoyo Comercial",
-    "Dirección Operaciones",
-    "Dirección Ventas",
+REPORTE_CITAS = "citas"
+REPORTE_DISPERSIONES = "dispersiones"
+REPORTE_COMISIONES = "comisiones"
+
+REPORTES_SCOPE_BY_GROUP = {
+    "Ventas": {REPORTE_CITAS},
+    "Apoyo Comercial": {REPORTE_CITAS, REPORTE_DISPERSIONES, REPORTE_COMISIONES},
+    "Dirección Operaciones": {REPORTE_CITAS, REPORTE_DISPERSIONES, REPORTE_COMISIONES},
+    "Dirección Ventas": {REPORTE_CITAS, REPORTE_DISPERSIONES, REPORTE_COMISIONES},
 }
 
 
@@ -16,7 +20,7 @@ def user_in_group(user, group_name):
 
 
 def is_ventas_user(user):
-    return user_in_group(user, VENTAS_GROUP)
+    return user_in_group(user, "Ventas")
 
 
 def can_view_reportes(user):
@@ -24,7 +28,30 @@ def can_view_reportes(user):
         return False
     if user.is_superuser:
         return True
-    return user.groups.filter(name__in=REPORTES_GROUPS).exists()
+    return user.has_perm("reportes.view_reporte")
+
+
+def can_view_reporte(user, reporte):
+    if not can_view_reportes(user):
+        return False
+    if user.is_superuser:
+        return True
+
+    allowed_groups = [
+        group_name
+        for group_name, reportes in REPORTES_SCOPE_BY_GROUP.items()
+        if reporte in reportes
+    ]
+    return user.groups.filter(name__in=allowed_groups).exists()
+
+
+def reportes_permitidos(user):
+    return {
+        reporte
+        for reportes in REPORTES_SCOPE_BY_GROUP.values()
+        for reporte in reportes
+        if can_view_reporte(user, reporte)
+    }
 
 
 def can_change_cita(user, cita, access):

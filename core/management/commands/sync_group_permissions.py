@@ -16,6 +16,7 @@ BUSINESS_APP_LABELS = [
     "comercial",
     "dispersiones",
     "comisiones",
+    "reportes",
 ]
 
 VENTAS_GROUP = "Ventas"
@@ -23,6 +24,7 @@ VENTAS_MODEL = "comercial.Cita"
 VENTAS_ACTIONS = ["view", "add", "change", "delete"]
 VENTAS_VIEW_ONLY_MODELS = [
     "alianzas.Alianza",
+    "reportes.Reporte",
 ]
 
 

@@ -16,7 +16,14 @@ from core.choices import (
     POSIBILIDAD_CHOICES,
     SERVICIO_CHOICES,
 )
-from core.scope import can_view_reportes
+from core.scope import (
+    REPORTE_CITAS,
+    REPORTE_COMISIONES,
+    REPORTE_DISPERSIONES,
+    can_view_reporte,
+    can_view_reportes,
+    reportes_permitidos,
+)
 from clientes.models import Cliente
 from dispersiones.models import Dispersion
 
@@ -62,6 +69,11 @@ MESES_NOMBRES = [
 
 def _require_reportes_access(user):
     if not can_view_reportes(user):
+        raise PermissionDenied
+
+
+def _require_reporte_access(user, reporte):
+    if not can_view_reporte(user, reporte):
         raise PermissionDenied
 
 
@@ -458,19 +470,17 @@ def _active_comision_filters(params, chart_data):
     return active
 
 
-def reporte_looker(request):
-    """Renderiza el dashboard de Looker Studio embebido."""
-    _require_reportes_access(request.user)
-    return render(request, 'reportes/looker.html')
-
-
 def reportes_home(request):
     _require_reportes_access(request.user)
-    return render(request, "reportes/dashboard_nav.html")
+    return render(
+        request,
+        "reportes/dashboard_nav.html",
+        {"reportes_permitidos": reportes_permitidos(request.user)},
+    )
 
 
 def dashboard_citas(request):
-    _require_reportes_access(request.user)
+    _require_reporte_access(request.user, REPORTE_CITAS)
     citas, params = _apply_citas_dashboard_filters(request, Cita.objects.all())
     chart_data = {
         "servicio": _value_counts(citas, "servicio", _choice_label_map(SERVICIO_CHOICES)),
@@ -499,7 +509,7 @@ def dashboard_citas(request):
 
 
 def dashboard_dispersiones(request):
-    _require_reportes_access(request.user)
+    _require_reporte_access(request.user, REPORTE_DISPERSIONES)
     dispersiones, params = _apply_dispersiones_dashboard_filters(request, Dispersion.objects.select_related("cliente"))
     chart_data = {
         "servicio": _value_sums(dispersiones, "servicio", "monto_dispersion"),
@@ -528,7 +538,7 @@ def dashboard_dispersiones(request):
 
 
 def dashboard_comisiones(request):
-    _require_reportes_access(request.user)
+    _require_reporte_access(request.user, REPORTE_COMISIONES)
     comisiones, params = _apply_comisiones_dashboard_filters(
         request,
         Comision.objects.select_related("cliente", "comisionista", "dispersion"),

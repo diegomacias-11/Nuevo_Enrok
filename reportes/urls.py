@@ -7,5 +7,4 @@ urlpatterns = [
     path('citas/', views.dashboard_citas, name='reportes_dashboard_citas'),
     path('dispersiones/', views.dashboard_dispersiones, name='reportes_dashboard_dispersiones'),
     path('comisiones/', views.dashboard_comisiones, name='reportes_dashboard_comisiones'),
-    path('looker/', views.reporte_looker, name='reporte_looker'),
 ]

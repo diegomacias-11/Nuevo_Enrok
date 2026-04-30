@@ -34,7 +34,7 @@ SERVICIO_CHOICES = [
     ("Préstamos", "Préstamos"),
     ("Reembolsos", "Reembolsos"),
     ("Licitación", "Licitación"),
-    ("Creación de empresa", "Creación de empresa"),
+    ("Constitución de sociedad", "Constitución de sociedad"),
     ("DC-3", "DC-3"),
     ("Venta de combustible", "Venta de combustible"),
 ]

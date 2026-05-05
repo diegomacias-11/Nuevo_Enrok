@@ -41,6 +41,10 @@ def get_reportable_field_label(model, field_name: str) -> str:
 
 
 def get_reportable_field_choices(model):
+    adapter = get_report_adapter(model)
+    if adapter and hasattr(adapter, "get_field_choices"):
+        return adapter.get_field_choices(model)
+
     fields = []
     numeric_types = (
         "IntegerField", "FloatField", "DecimalField", "BigIntegerField",

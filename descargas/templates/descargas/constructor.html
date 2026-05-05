@@ -1,0 +1,287 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Constructor de reportes{% endblock %}
+{% block page_context_title %}Reporte - {{ model_label }}{% endblock %}
+
+{% block top_bars_shell_class %}top-bars-shell lista-sticky-stack{% endblock %}
+{% block filters_section_class %} lista-sticky-filter-container{% endblock %}
+
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'css/style.descargas.css' %}">
+{% endblock %}
+
+{% block top_title_bar %}
+  <div class="top-bars-context-strip">
+    <div class="top-bars-context-bar">
+      <div class="top-bars-context-start">
+        {% if request.GET.next %}
+          <a href="{{ request.GET.next }}" class="btn-filter btn-volver">Volver</a>
+        {% endif %}
+      </div>
+      <span class="area-title">Reporte - {{ model_label }}</span>
+      <div class="top-bars-title-alerts" aria-live="polite" aria-atomic="true"></div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block filtros %}
+  {% if filters_template %}
+    <form method="get"
+          action="{{ request.path }}"
+          class="filter-form-simple comisiones-filter">
+      <input type="hidden" name="source" value="{{ source }}">
+      {% if request.GET.next %}
+        <input type="hidden" name="next" value="{{ request.GET.next }}">
+      {% endif %}
+      {% include filters_template %}
+      {% include "includes/filters/actions.html" with clean_url=clean_url %}
+    </form>
+  {% endif %}
+{% endblock %}
+
+{% block acciones %}{% endblock %}
+
+{% block content %}
+  <div class="page-shell page-shell-form">
+    {% if filters_template %}
+      <section class="page-filter-bar">
+        {% include filters_template %}
+      </section>
+    {% endif %}
+
+    <section class="page-action-bar">
+      <div class="page-action-bar-inner">
+        {% if request.GET.next %}
+          <a href="{{ request.GET.next }}" class="btn-primary btn-primary-inline">Volver</a>
+        {% endif %}
+      </div>
+    </section>
+
+  <div class="form-container">
+    <form method="post" data-confirm="0">
+      {% csrf_token %}
+      <input type="hidden" name="source" value="{{ source }}">
+      <input type="hidden" name="next" value="{{ request.GET.next }}">
+      {% for field in filter_hidden_fields %}
+        <input type="hidden" name="{{ field.name }}" value="{{ field.value }}">
+      {% endfor %}
+
+      <div class="form-shell">
+        <div class="form-main">
+          <section class="form-section-card">
+            <div class="report-section-inner">
+              <div class="form-section-head">
+                <h3>Reporte - {{ model_label }}</h3>
+                {% if result_count != None %}
+                  <p>Registros encontrados: {{ result_count }}</p>
+                {% endif %}
+              </div>
+              <div class="form-grid">
+                <div class="form-col">
+                  <label for="archivo">Tipo de archivo</label>
+                  <select id="archivo" name="archivo">
+                    <option value="pdf" {% if config_query.archivo != "excel" %}selected{% endif %}>PDF</option>
+                    <option value="excel" {% if config_query.archivo == "excel" %}selected{% endif %}>Excel</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="form-section-card form-section-card-muted report-config-panel" data-report-panel="pdf">
+            <div class="report-section-inner">
+              <div class="form-section-head">
+                <h3>Opciones PDF</h3>
+                <p>Activa los bloques que quieres mostrar en la hoja.</p>
+              </div>
+              <div class="report-block-grid">
+                <div class="report-block-control">
+                  <label class="checkbox-list-toggle">
+                    <span>Titulo</span>
+                    <span class="toggle-switch">
+                      <input type="checkbox" name="pdf_bloque_titulo" data-preview-toggle="title" {% if config_query.pdf_bloque_titulo %}checked{% endif %}>
+                    </span>
+                  </label>
+                  <input type="text" name="pdf_titulo" value="{{ config_query.pdf_titulo }}" data-preview-field="title" placeholder="Titulo del reporte">
+                </div>
+                <div class="report-block-control">
+                  <label class="checkbox-list-toggle">
+                    <span>Fecha</span>
+                    <span class="toggle-switch">
+                      <input type="checkbox" name="pdf_bloque_fecha" data-preview-toggle="date" {% if config_query.pdf_bloque_fecha %}checked{% endif %}>
+                    </span>
+                  </label>
+                  <input type="date" name="pdf_fecha" value="{{ today_iso }}" data-preview-field="date" readonly>
+                </div>
+                <div class="report-block-control">
+                  <label class="checkbox-list-toggle">
+                    <span>Subtitulo</span>
+                    <span class="toggle-switch">
+                      <input type="checkbox" name="pdf_bloque_subtitulo" data-preview-toggle="subtitle" {% if config_query.pdf_bloque_subtitulo %}checked{% endif %}>
+                    </span>
+                  </label>
+                  <input type="text" name="pdf_subtitulo" value="{{ config_query.pdf_subtitulo }}" data-preview-field="subtitle" placeholder="Subtitulo del reporte">
+                </div>
+                <div class="report-block-control report-block-wide">
+                  <label class="checkbox-list-toggle">
+                    <span>Parrafo</span>
+                    <span class="toggle-switch">
+                      <input type="checkbox" name="pdf_bloque_parrafo" data-preview-toggle="paragraph" {% if config_query.pdf_bloque_parrafo %}checked{% endif %}>
+                    </span>
+                  </label>
+                  <textarea name="pdf_parrafo" data-preview-field="paragraph" placeholder="Texto introductorio del reporte">{{ config_query.pdf_parrafo }}</textarea>
+                </div>
+                <div class="report-block-control report-block-wide">
+                  <label class="checkbox-list-toggle">
+                    <span>Tabla</span>
+                    <span class="toggle-switch">
+                      <input type="checkbox" name="pdf_bloque_tabla" data-preview-toggle="table" {% if config_query.pdf_bloque_tabla %}checked{% endif %}>
+                    </span>
+                  </label>
+                </div>
+                <div class="report-block-control report-block-wide">
+                  <label class="checkbox-list-toggle">
+                    <span>Pie de tabla</span>
+                    <span class="toggle-switch">
+                      <input type="checkbox" name="pdf_bloque_pie" data-preview-toggle="footer" {% if config_query.pdf_bloque_pie %}checked{% endif %}>
+                    </span>
+                  </label>
+                  <textarea name="pdf_pie" data-preview-field="footer" placeholder="Pie de tabla">{{ config_query.pdf_pie }}</textarea>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="form-section-card form-section-card-muted report-config-panel" data-report-panel="excel" hidden>
+            <div class="report-section-inner">
+              <div class="form-section-head">
+                <h3>Opciones Excel</h3>
+                <p>Configura el archivo descargable.</p>
+              </div>
+              <div class="report-block-grid">
+                <div class="report-excel-filename-row">
+                  <div class="report-block-control report-excel-filename-title">
+                    <label for="excel_titulo_archivo">Titulo del archivo</label>
+                  <input type="text" id="excel_titulo_archivo" name="excel_titulo_archivo" value="{{ config_query.excel_titulo_archivo }}" placeholder="reporte">
+                  </div>
+                  <div class="report-excel-filename-plus" aria-hidden="true">+</div>
+                  <div class="report-block-control report-excel-filename-date">
+                    <label class="checkbox-list-toggle" for="excel_incluir_fecha_archivo">
+                      <span>Fecha</span>
+                      <span class="toggle-switch">
+                        <input type="checkbox" id="excel_incluir_fecha_archivo" name="excel_incluir_fecha_archivo" {% if config_query.excel_incluir_fecha_archivo or not config_has_params %}checked{% endif %}>
+                      </span>
+                    </label>
+                    <input type="date" id="excel_fecha_archivo" name="excel_fecha_archivo" value="{{ today_iso }}" readonly>
+                  </div>
+                </div>
+                <div class="report-excel-options-row">
+                  <div class="report-block-control">
+                    <label class="checkbox-list-toggle">
+                      <span>Incluir encabezados</span>
+                      <span class="toggle-switch">
+                        <input type="checkbox" name="excel_incluir_encabezados" {% if config_query.excel_incluir_encabezados or not config_has_params %}checked{% endif %}>
+                      </span>
+                    </label>
+                  </div>
+                  <div class="report-block-control">
+                    <label class="checkbox-list-toggle">
+                      <span>Conteo de fila</span>
+                      <span class="toggle-switch">
+                        <input type="checkbox" name="excel_incluir_conteo" {% if config_query.excel_incluir_conteo %}checked{% endif %}>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="form-section-card form-section-card-muted" data-columns-section>
+            <div class="report-section-inner">
+              <div class="form-section-head">
+                <h3>Columnas</h3>
+                <p>Activa las columnas que se incluiran en la tabla del reporte.</p>
+              </div>
+              <div class="form-grid">
+                <div class="form-col form-col-wide">
+                  <label>Columnas disponibles</label>
+                  <div class="checkbox-list">
+                    {% for field in fields %}
+                      <label class="checkbox-list-toggle">
+                        <span>{{ field.label }}</span>
+                        <span class="toggle-switch">
+                          <input type="checkbox" name="columnas" value="{{ field.name }}" data-column-label="{{ field.label }}" data-column-numeric="{% if field.is_numeric %}1{% else %}0{% endif %}" {% if field.name in selected_columns_config %}checked{% endif %}>
+                        </span>
+                      </label>
+                    {% endfor %}
+                  </div>
+                </div>
+                <div class="form-col form-col-wide">
+                  <label>Orden de columnas activas</label>
+                  <input type="hidden" name="columnas_orden" value="{{ config_query.columnas_orden }}" data-column-order-input>
+                  <div class="report-column-order" data-column-order-list data-total-columns="{{ selected_total_columns_config|join:',' }}">
+                    <p class="report-empty-state">Activa columnas para ordenarlas.</p>
+                    {% for field in fields %}
+                      {% if field.name in selected_columns_config %}
+                        <div class="report-column-order-item" data-column-order-item="{{ field.name }}">
+                          <span class="report-column-label">{{ field.label }}</span>
+                        </div>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="form-section-card form-section-card-muted report-preview-section" data-report-panel="pdf">
+            <div class="report-section-inner">
+              <div class="form-section-head">
+                <h3>Vista previa</h3>
+                <p>Actualiza la vista previa despues de elegir bloques, columnas y orden.</p>
+              </div>
+              <div class="report-preview-actions">
+                <button type="button" class="btn-primary btn-primary-inline" data-preview-refresh>Actualizar vista previa</button>
+              </div>
+              <div class="report-preview-page">
+                <div class="report-preview-content">
+                  <div class="report-preview-heading">
+                    <div class="report-preview-title-group">
+                      <h2 data-preview-output="title" hidden></h2>
+                      <p class="report-preview-subtitle" data-preview-output="subtitle" hidden></p>
+                    </div>
+                    <p class="report-preview-date" data-preview-output="date" hidden></p>
+                  </div>
+                  <p class="report-preview-paragraph" data-preview-output="paragraph" style="text-align: justify;" hidden></p>
+                  <p class="report-preview-message" data-preview-message>Selecciona opciones y actualiza la vista previa.</p>
+                  <div class="report-preview-table-wrap" data-preview-output="table" hidden>
+                    <table class="report-preview-table">
+                      <thead>
+                        <tr data-preview-table-head></tr>
+                      </thead>
+                      <tbody>
+                        <tr data-preview-table-row></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="report-preview-footer" data-preview-output="footer" hidden></div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+        <div class="form-submit-bar">
+          <div class="form-submit-bar-inner">
+            <button type="submit" class="btn-submit">Descargar reporte</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <script id="report-preview-rows" type="application/json">{{ preview_rows_json }}</script>
+  <script src="{% static 'js/forms/base_form.js' %}"></script>
+  <script src="{% static 'js/descargas/constructor.js' %}"></script>
+  </div>
+{% endblock %}

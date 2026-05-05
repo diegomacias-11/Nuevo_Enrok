@@ -20,7 +20,9 @@ def user_in_group(user, group_name):
 
 
 def is_ventas_user(user):
-    return user_in_group(user, "Ventas")
+    if not user_in_group(user, "Ventas"):
+        return False
+    return not user.groups.filter(name__in=["Dirección Operaciones", "Dirección Ventas"]).exists()
 
 
 def can_view_reportes(user):

@@ -70,44 +70,14 @@ def _initial_desde_cita(cita: Cita) -> dict:
     }
 
 
-def citas_lista(request: HttpRequest) -> HttpResponse:
-    access = get_model_access(request.user, Cita)
-    require_model_permission(request.user, Cita, "view")
-
-    citas = Cita.objects.all().order_by("-fecha_registro")
+def _cita_filter_context(request: HttpRequest) -> dict:
     prospecto = (request.GET.get("prospecto") or "").strip()
     fecha_desde = request.GET.get("fecha_desde") or ""
     fecha_hasta = request.GET.get("fecha_hasta") or ""
     estatus_seguimiento = request.GET.get("estatus_seguimiento") or ""
     vendedor = request.GET.get("vendedor") or ""
     alianza = request.GET.get("alianza") or ""
-
-    if prospecto:
-        citas = citas.filter(prospecto__icontains=prospecto)
-    if vendedor:
-        citas = citas.filter(vendedor_usuario_id=vendedor)
-    if alianza:
-        citas = citas.filter(alianza=alianza)
-
-    tz = timezone.get_current_timezone()
-    if fecha_desde:
-        try:
-            d = datetime.strptime(fecha_desde, "%Y-%m-%d").date()
-            start_dt = timezone.make_aware(datetime.combine(d, time.min), tz)
-            citas = citas.filter(fecha_cita__gte=start_dt)
-        except ValueError:
-            pass
-    if fecha_hasta:
-        try:
-            d = datetime.strptime(fecha_hasta, "%Y-%m-%d").date()
-            end_dt = timezone.make_aware(datetime.combine(d, time.max), tz)
-            citas = citas.filter(fecha_cita__lte=end_dt)
-        except ValueError:
-            pass
-    if estatus_seguimiento:
-        citas = citas.filter(estatus_seguimiento=estatus_seguimiento)
-    context = {
-        "citas": citas,
+    return {
         "prospecto": prospecto,
         "fecha_desde": fecha_desde,
         "fecha_hasta": fecha_hasta,
@@ -117,6 +87,45 @@ def citas_lista(request: HttpRequest) -> HttpResponse:
         "vendedor_choices": _vendedor_choices(request.user),
         "alianza": alianza,
     }
+
+
+def _filtered_citas(request: HttpRequest):
+    citas = Cita.objects.all().order_by("-fecha_registro")
+    context = _cita_filter_context(request)
+
+    if context["prospecto"]:
+        citas = citas.filter(prospecto__icontains=context["prospecto"])
+    if context["vendedor"]:
+        citas = citas.filter(vendedor_usuario_id=context["vendedor"])
+    if context["alianza"]:
+        citas = citas.filter(alianza=context["alianza"])
+
+    tz = timezone.get_current_timezone()
+    if context["fecha_desde"]:
+        try:
+            d = datetime.strptime(context["fecha_desde"], "%Y-%m-%d").date()
+            start_dt = timezone.make_aware(datetime.combine(d, time.min), tz)
+            citas = citas.filter(fecha_cita__gte=start_dt)
+        except ValueError:
+            pass
+    if context["fecha_hasta"]:
+        try:
+            d = datetime.strptime(context["fecha_hasta"], "%Y-%m-%d").date()
+            end_dt = timezone.make_aware(datetime.combine(d, time.max), tz)
+            citas = citas.filter(fecha_cita__lte=end_dt)
+        except ValueError:
+            pass
+    if context["estatus_seguimiento"]:
+        citas = citas.filter(estatus_seguimiento=context["estatus_seguimiento"])
+    return citas, context
+
+
+def citas_lista(request: HttpRequest) -> HttpResponse:
+    access = get_model_access(request.user, Cita)
+    require_model_permission(request.user, Cita, "view")
+
+    citas, context = _filtered_citas(request)
+    context["citas"] = citas
     context.update(access_context(access))
     return render(request, "comercial/lista.html", context)
 

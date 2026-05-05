@@ -187,6 +187,15 @@ def build_pdf_report(rows, fields, post_data, filename="reporte.pdf"):
         parent=body_style,
         alignment=TA_JUSTIFY,
     )
+    table_header_style = ParagraphStyle(
+        "ReportTableHeader",
+        parent=body_style,
+        fontName="Poppins-Bold",
+        fontSize=7,
+        leading=8,
+        textColor=colors.HexColor("#1f2a3d"),
+        alignment=1,
+    )
 
     elements = []
     title_text = post_data.get("pdf_titulo") or ""
@@ -224,7 +233,9 @@ def build_pdf_report(rows, fields, post_data, filename="reporte.pdf"):
 
     if _active(post_data, "pdf_bloque_tabla") and selected_columns:
         elements.append(Spacer(1, 12))
-        table_data = [[field_map.get(column, column) for column in selected_columns]]
+        table_data = [
+            [Paragraph(field_map.get(column, column), table_header_style) for column in selected_columns]
+        ]
         totals = {column: 0 for column in total_columns}
         has_total_values = {column: False for column in total_columns}
         for row in rows:

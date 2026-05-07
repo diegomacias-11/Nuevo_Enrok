@@ -410,6 +410,14 @@
   resize: vertical;
 }
 
+.form-container select {
+  padding-right: 2.2rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23003b71' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-position: calc(100% - 0.85rem) 50%;
+  background-size: 1rem 1rem;
+  background-repeat: no-repeat;
+}
+
 .form-container :is(input:not([type="checkbox"]), select, textarea):is([disabled], [readonly], [aria-disabled="true"], .is-readonly) {
   background:
     repeating-linear-gradient(

@@ -74,6 +74,8 @@ ESTATUS_SEGUIMIENTO_CHOICES = [
     ("Pendiente de cierre", "Pendiente de cierre"),
     ("En activación", "En activación"),
     ("Reclutando", "Reclutando"),
+    ("Prospecto", "Prospecto"),
+    ("Retomar", "Retomar"),
     ("Activo", "Activo"),
     ("No está interesado en este servicio", "No está interesado en este servicio"),
     ("No se adapta su operación actual al servicio ofrecido", "No se adapta su operación actual al servicio ofrecido"),

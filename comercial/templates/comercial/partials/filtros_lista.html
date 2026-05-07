@@ -28,6 +28,16 @@
   </div>
   <span class="filter-separator" aria-hidden="true"></span>
   <div class="filter-block">
+    <label for="servicio">Servicio</label>
+    <select id="servicio" name="servicio">
+      <option value="">Todos</option>
+      {% for value, label in servicio_choices %}
+        <option value="{{ value }}" {% if value == servicio %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <span class="filter-separator" aria-hidden="true"></span>
+  <div class="filter-block">
     <label for="estatus_seguimiento">Estatus seguimiento</label>
     <select id="estatus_seguimiento" name="estatus_seguimiento">
       <option value="">Todos</option>

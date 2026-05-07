@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
 
-from core.choices import ESTATUS_SEGUIMIENTO_CHOICES
+from core.choices import ESTATUS_SEGUIMIENTO_CHOICES, SERVICIO_CHOICES
 from core.access import (
     access_context,
     disable_form_fields,
@@ -77,6 +77,7 @@ def _cita_filter_context(request: HttpRequest) -> dict:
     estatus_seguimiento = request.GET.get("estatus_seguimiento") or ""
     vendedor = request.GET.get("vendedor") or ""
     alianza = request.GET.get("alianza") or ""
+    servicio = request.GET.get("servicio") or ""
     return {
         "prospecto": prospecto,
         "fecha_desde": fecha_desde,
@@ -86,6 +87,8 @@ def _cita_filter_context(request: HttpRequest) -> dict:
         "vendedor": vendedor,
         "vendedor_choices": _vendedor_choices(request.user),
         "alianza": alianza,
+        "servicio": servicio,
+        "servicio_choices": SERVICIO_CHOICES,
     }
 
 
@@ -99,6 +102,8 @@ def _filtered_citas(request: HttpRequest):
         citas = citas.filter(vendedor_usuario_id=context["vendedor"])
     if context["alianza"]:
         citas = citas.filter(alianza=context["alianza"])
+    if context["servicio"]:
+        citas = citas.filter(servicio=context["servicio"])
 
     tz = timezone.get_current_timezone()
     if context["fecha_desde"]:

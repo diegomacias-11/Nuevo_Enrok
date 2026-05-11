@@ -76,6 +76,8 @@ ESTATUS_SEGUIMIENTO_CHOICES = [
     ("Reclutando", "Reclutando"),
     ("Prospecto", "Prospecto"),
     ("Retomar", "Retomar"),
+    ("Visitado", "Visitado"),
+    ("Contactar", "Contactar"),
     ("Activo", "Activo"),
     ("No está interesado en este servicio", "No está interesado en este servicio"),
     ("No se adapta su operación actual al servicio ofrecido", "No se adapta su operación actual al servicio ofrecido"),

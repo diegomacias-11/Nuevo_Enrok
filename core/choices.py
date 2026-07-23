@@ -32,6 +32,7 @@ SERVICIO_CHOICES = [
     ("Pendiente", "Pendiente"),
     ("Préstamos", "Préstamos"),
     ("Reembolsos", "Reembolsos"),
+    ("Reclutamiento", "Reclutamiento"),
     ("Sindicato", "Sindicato"),
     ("TPV", "TPV"),
     ("Todos", "Todos"),
